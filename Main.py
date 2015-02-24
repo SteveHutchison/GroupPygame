@@ -4,18 +4,18 @@ from pygame.locals import *
 
 pygame.init()
 
-ball = pygame.image.load("M:/groupPy/img/player.png")
+player = pygame.image.load("M:/groupPy/img/player.png")
 background = pygame.image.load("M:/groupPy/img/background.png")
 
-ballrect = ball.get_rect()
+playerRect = player.get_rect()
 backgroundRect = background.get_rect()
 
 size = (width, height) = background.get_size()
 screen = pygame.display.set_mode(size)
 
 b3x = 200
-b3y = 768
-movex = 2
+b3y = 750
+movex = 3
 movey = 0
 
 left = False
@@ -37,6 +37,12 @@ while 1:
 			if event.key==pygame.K_RIGHT:
 				right = False
 	
+	if b3x + movex < 0:
+		left = False
+		
+	if b3x + playerRect.width + movex > backgroundRect.width:
+		right = False
+	
 	if right == True:
 		b3x += movex
 		
@@ -44,6 +50,6 @@ while 1:
 		b3x -= movex
 	
 	screen.blit(background, backgroundRect)
-	screen.blit(ball,(b3x,b3y))
+	screen.blit(player,(b3x,b3y))
 	
 	pygame.display.flip()
