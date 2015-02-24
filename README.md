@@ -1,5 +1,10 @@
 # GroupPygame
-Our group pygame program
+
+Semester 2 group project at Abertay University 2015.
+
+To get started clone the repo using either Git GUI or typing <code>git clone [url]</code>.
+
+The project includes a launch.bat file which you should be abled to double click to launch the game. This may not work depending on where you cloned the repo to on your machine and the location of your python.exe in which case you would have to open up launch.bat and modify the file paths to point to the appropriate locations. Alternatively you can open up your python interpreter and launch the file from there using <code>execfile("path\to\file\filename.py")</code>.
 
 ---
 ## Using git
