@@ -25,10 +25,23 @@ https://help.github.com/articles/configuring-a-remote-for-a-fork/
 
 http://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging
 
-While it's possible to change files on your 'Master' branch it's often a good idea to keep your changes in a seperate branch and keep the master clean for pushing, fetching, merging, or reverting if the code your currently working on goes wrong. To create a new branch you use the branch command:
-'''
+Some things can be done using Git GUI but many of these commands require you to use the command line. To open the command line from Git GUI go to 
+
+While it's possible to change files on your 'Master' branch it's often a good idea to keep your changes in a seperate branch and keep the master clean for pushing, fetching, merging, or reverting if the code your currently working on goes wrong. To create a new branch you use the branch command, where [name] is the name of the new branch you are creating. 
+```
 git branch [name]
-'''
+``` 
+
+Lists all branches in your local repo
+```
+git branch -v
+```
+
+To *delete* a branch type, where [name] is the name of the branch you would like to delete
+```
+git branch -d [name]
+```
+
 
 The basic procedure goes like this
 1. Create a new branch for whatever you want to work on next
