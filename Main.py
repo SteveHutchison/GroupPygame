@@ -37,6 +37,12 @@ while 1:
 			if event.key==pygame.K_RIGHT:
 				right = False
 	
+	if b3x + movex < 0:
+		left = False
+		
+	if b3x + playerRect.width + movex > backgroundRect.width:
+		right = False
+	
 	if right == True:
 		b3x += movex
 		
