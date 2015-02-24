@@ -33,7 +33,7 @@ https://help.github.com/articles/configuring-a-remote-for-a-fork/
 1. Log into your github account
 2. Find the project you want to work on using the search bar on github.com
 2. Fork the project
-3. Copy the project URL of the fork you just created
+3. Copy the URL of the fork you just created
 4. Open up Git GUI on your local machine and create a new project using the URL of your fork
 
 ### Changing Files
@@ -44,14 +44,15 @@ Some things can be done using Git GUI but many of these commands require you to 
 
 While it's possible to change files on your 'Master' branch it's often a good idea to keep your changes in a seperate branch and keep the master clean for pushing, fetching, merging, doing an important hotfix or reverting to if something goes wrong.  
 
-**Remember** if you get lost at any point you can use the <code>git status</code> to find out where you are or <code>git help</code> to get more information on a particular topic.
+**Remember** if you get lost at any point you can use `git status` to find out where you are or `git help` to get more information on a particular topic.
 
 To create a new branch you use the branch command, where [name] is the name of the new branch you are creating. 
 ```
 git branch [name]
 ``` 
 
-To switch to a different branch use the checkout command. https://www.atlassian.com/git/tutorials/using-branches/git-checkout
+To switch to a different branch use the checkout command.  
+https://www.atlassian.com/git/tutorials/using-branches/git-checkout  
 ```
 git checkout [existing branch]
 ```
@@ -73,7 +74,7 @@ Before you commit files to your local Git repository you have to put them in the
 git add [filename]
 ```
 
-Once you've added your files to the staging area and are want to save them use the <code>commit</code> command, making sure to give the commit a usefull message/
+Once you've added your files to the staging area and are want to save them use the <code>commit</code> command, making sure to give the commit a usefull message
 ```
 git commit -m "Write a descriptive message here!"
 ```
@@ -112,7 +113,7 @@ For more information see the links above, the atlassian page is particularly goo
 
 At some point someone is going to update the main repository for your project and your will want to see what they've done. If you've been working on a new feature in a seperate branch it might be a good idea to switch back to your master branch at this point by typing <code>git checkout master</code>. If your not sure where you are you can always <code>git status</code> to find out.  
 
-Before you actually merge you should make sure your current branch is *clean* i.e. you have no uncommited files. If you don't do this git will complain and you will feel bad.  
+Before you actually merge you should make sure you have *no uncommited files* i.e. commit all your changes *before* you attempt to merge. If you don't do this git will complain and you will feel bad.  
 
 Assuming you've already configured the repo you want to pull from as a remote (go here if you haven't 
 https://help.github.com/articles/configuring-a-remote-for-a-fork/) you use the fetch command to fetch changes from it.
