@@ -91,13 +91,17 @@ The basic procedure for modifying your code goes like this:
 Remember kids, commit early, commit often  
 http://www.databasically.com/2011/03/14/git-commit-early-commit-often/
 
-## Something went wrong!
+## Undoing Changes
 
 https://www.atlassian.com/git/tutorials/undoing-changes
 http://git-scm.com/book/ca/v1/Git-Basics-Undoing-Things
 http://www-cs-students.stanford.edu/~blynn/gitmagic/ch02.html
 
-**Warning: the following commands can make changes which cannot be undone.** The reset command will help you move back through your git history. Using '--hard' will revert any tracked files to the state they were when last commited.
+TODO: more detail here  
+The safe way of undoing changes is using the revert command. See links above.
+
+**Warning: the following commands make changes which cannot be undone.** The reset command will you move back through your git history, deleting the recent changes as it goes. This can be dangerous when trying to undo large changes but can be very usefully in certain cases. Say you commit a working version of your code, you carry on changing things but when you go to test somethings broken and you just can't figure out what. Using '--hard' will revert any tracked files to the state they were when last commited, reseting you to your last commit.  
+Put another way: this obliterates all uncommitted changes.
 ```
 git reset --hard
 ```
