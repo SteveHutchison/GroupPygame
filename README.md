@@ -13,7 +13,7 @@ This is supposed to be a quick and easy guide to getting up to speed with Git fo
 
 ### Learning Aids
 
-A great interactive online demo of git, try this first.
+A great interactive online demo of git, try this first.  
 https://www.codeschool.com/courses/try-git
 
 Extensive guide on git features.  
@@ -88,7 +88,7 @@ The basic procedure for modifying your code goes like this:
 2. switch to your new branch  
 3. Code, commit, test, repeat  
  
-Remember kids, commit early, commit often  
+Remember kids, commit early, commit often.  
 http://www.databasically.com/2011/03/14/git-commit-early-commit-often/
 
 ## Undoing Changes
@@ -123,16 +123,18 @@ It's common to name the remote that points to the main repository *upstream* in 
 ```
 git merge [name of branch to be merged in]
 ```
-So in our example where we want to merge <code>upstream/master</code> into <code>master</code> we checkout master and type <code>git merge upstream/master</code>.  
+So in our example where we want to merge `upstream/master` into `master` we checkout master and type `git merge upstream/master`.  
 
 Sometimes git will tell you there is a conflict when you try and merge. If this happens it will tell you which files are conflicting and wrap them in something that looks like this:  
 
- the number of planets are
- <<<<<<< HEAD
- nine
- =======
- eight
- >>>>>>> branch-a
+```
+the number of planets are
+<<<<<<< HEAD
+nine
+=======
+eight
+>>>>>>> branch-a
+```
  
 Fixing this is surpisingly simple, just open up the file and delete the text you don't want. 
 
