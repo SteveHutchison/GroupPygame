@@ -93,32 +93,56 @@ http://www.databasically.com/2011/03/14/git-commit-early-commit-often/
 
 ## Something went wrong!
 
+https://www.atlassian.com/git/tutorials/undoing-changes
 http://git-scm.com/book/ca/v1/Git-Basics-Undoing-Things
 http://www-cs-students.stanford.edu/~blynn/gitmagic/ch02.html
 
-If you made some terrible changes to your code and everything went wrong, have no fear. The reset command will help you move back through your git history. Using '--hard' will simply throw away any changes and reset your working directory to your last commit.
+**Warning: the following commands can make changes which cannot be undone.** The reset command will help you move back through your git history. Using '--hard' will revert any tracked files to the state they were when last commited.
 ```
 git reset --hard
 ```
 
-TODO: describe how to reset your branch to the last commit
-roll back to previous commits
-undo changes
-bring back files from the dead
+For more information see the links above, the atlassian page is particularly good.
 
 ## Time to merge
 
-TODO: how to merge
+At some point someone is going to update the main repository for your project and your will want to see what they've done. If you've been working on a new feature in a seperate branch it might be a good idea to switch back to your master branch at this point by typing <code>git checkout master</code>. If your not sure where you are you can always <code>git status</code> to find out.  
 
-conflict resolution
+Before you actually merge you should make sure your current branch is *clean* i.e. you have no uncommited files. If you don't do this git will complain and you will feel bad.  
+
+Assuming you've already configured the repo you want to pull from as a remote (go here if you haven't 
+https://help.github.com/articles/configuring-a-remote-for-a-fork/) you use the fetch command to fetch changes from it.
+```
+git fetch [remote name]
+```
+It's common to name the remote that points to the main repository *upstream* in which case the command would be <code>git fetch upstream</code>. This creates a new branch on your machine which is a copy of the remote, in our case the branch created will be <code>upstream/master</code>. Double check you are in the branch you want to merge the upstream repo into, take a deep breath, and merge.  
+```
+git merge [name of branch to be merged in]
+```
+So in our example where we want to merge <code>upstream/master</code> into <code>master</code> we checkout master and type <code>git merge upstream/master</code>.  
+
+Sometimes git will tell you there is a conflict when you try and merge. If this happens it will tell you which files are conflicting and wrap them in something that looks like this:  
+
+ the number of planets are
+ <<<<<<< HEAD
+ nine
+ =======
+ eight
+ >>>>>>> branch-a
+ 
+Fixing this is surpisingly simple, just open up the file and delete the text you don't want. 
 
 ## Sharing your changes
+
+TODO: more description here
 
 Push to your github repo
 
 create pull requests
 
 ## Credits
+
+Clone it, branch it, code it, test it, commit it, fetch it, merge it, push it.
 
 Programmer Monkey 1: Steve Hutchison  
 Programmer Monkey 2: Liam Jeffry  
