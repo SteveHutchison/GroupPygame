@@ -12,7 +12,8 @@ size = (width, height) = background.get_size()
 screen = pygame.display.set_mode(size)
 
 b3x = 200
-b3y = 0
+b3y = 768
+#b3y = backroundRect.height - ballrect.height
 movex = 0
 movey = 0
 
