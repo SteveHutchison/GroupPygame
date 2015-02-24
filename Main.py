@@ -2,8 +2,8 @@ import sys, pygame
 import random
 pygame.init()
 
-ball = pygame.image.load("ball.bmp")
-background = pygame.image.load("BG.bmp")
+ball = pygame.image.load("M:/groupPy/img/player.png")
+background = pygame.image.load("M:/groupPy/img/background.png")
 
 ballrect = ball.get_rect()
 backgroundRect = background.get_rect()
