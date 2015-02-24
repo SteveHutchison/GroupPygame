@@ -4,6 +4,13 @@ Our group pygame program
 ---
 ## Using git
 
+This is supposed to be a quick and easy guide to getting up to speed with Git for use in teams. It is not supposed to be an exhaustive list of all Git's features.
+
+### Learning Aids
+
+A great interactive online demo of git, try this first.
+https://www.codeschool.com/courses/try-git
+
 Extensive guide on git features.  
 http://www-cs-students.stanford.edu/~blynn/gitmagic/
 
@@ -32,6 +39,8 @@ Some things can be done using Git GUI but many of these commands require you to 
 
 While it's possible to change files on your 'Master' branch it's often a good idea to keep your changes in a seperate branch and keep the master clean for pushing, fetching, merging, doing an important hotfix or reverting to if something goes wrong.  
 
+**Remember** if you get lost at any point you can use the <code>git status</code> to find out where you are or <code>git help</code> to get more information on a particular topic.
+
 To create a new branch you use the branch command, where [name] is the name of the new branch you are creating. 
 ```
 git branch [name]
@@ -52,6 +61,23 @@ To **delete** a branch use the '-d' flag, where [name] is the name of the branch
 git branch -d [name]
 ```
 
+### Commiting files
+
+Before you commit files to your local Git repository you have to put them in the *staging area* using the add command.
+```
+git add [filename]
+```
+
+Once you've added your files to the staging area and are want to save them use the <code>commit</code> command, making sure to give the commit a usefull message/
+```
+git commit -m "Write a descriptive message here!"
+```
+
+Log will show you a history of all the commits to your repository along with the commit message and a unique hash used to identify the commit if you want to revert to it later.
+```
+git log
+```
+
 The basic procedure for modifying your code goes like this:  
 1. Create a new branch for the new feature you would like to add  
 2. switch to your new branch  
@@ -61,6 +87,14 @@ Remember kids, commit early, commit often
 http://www.databasically.com/2011/03/14/git-commit-early-commit-often/
 
 ## Something went wrong!
+
+http://git-scm.com/book/ca/v1/Git-Basics-Undoing-Things
+http://www-cs-students.stanford.edu/~blynn/gitmagic/ch02.html
+
+If you made some terrible changes to your code and everything went wrong, have no fear. The reset command will help you move back through your git history. Using '--hard' will simply throw away any changes and reset your working directory to your last commit.
+```
+git reset --hard
+```
 
 TODO: describe how to reset your branch to the last commit
 roll back to previous commits
@@ -81,7 +115,7 @@ create pull requests
 
 ## Credits
 
-programmer monkey 1: Steve Hutchison  
+Programmer Monkey 1: Steve Hutchison  
 Programmer Monkey 2: Liam Jeffry  
 Technical Advisor: Thomas Hope  
 Lead Artist: Paul Kidd  
