@@ -74,11 +74,11 @@ while 1:
 	for b in enemies:
 		b['rect'].move_ip(0, ENEMYSPEED)
 	# check for collisions
-	#for b in enemies:
-		#if playerRect.colliderect(b['rect']):
+	for b in enemies:
+		if playerRect.colliderect(b['rect']):
 			#pygame.quit()
 			#sys.exit()
-			#print "collision"
+			print "collision"
 	
 	# Draw the Background
 	screen.blit(background, backgroundRect)
