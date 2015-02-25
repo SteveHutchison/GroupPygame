@@ -52,6 +52,7 @@ def main():
 	player_x = 316
 	player_y = 700
 	shooting = False
+	max_power = 4
 	power = 1
 	
 	# player bullet variables
@@ -108,9 +109,9 @@ def main():
 						moveDown = True
 					if event.key == K_SPACE:
 						shooting = True
-					if event.key == ord('z'):
+					if event.key == ord('z') and power < max_power:
 						power += 1
-					if event.key == ord('x'):
+					if event.key == ord('x') and power > 1:
 						power -= 1
 				if event.type == KEYUP:
 					if event.key == K_ESCAPE:
@@ -276,6 +277,7 @@ def main():
 
 
 
+			# draw the stats
 			fontRenderer.draw_stat("Score: ", score, (10,10), screen)
 			fontRenderer.draw_stat("Health: ", playerHealth, (10, 40), screen)
 
