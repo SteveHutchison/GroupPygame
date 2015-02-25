@@ -15,7 +15,7 @@ class AsteroidFactory:
 		self.counter = 0
 
 		# whenever counter => spawnrate a new asteroid is made
-		self.spawnRate = 20
+		self.frameBetweenSpawns = 40
 
 		self.asteroids = []
 
@@ -28,7 +28,7 @@ class AsteroidFactory:
 	def spawn(self, width):
 		self.counter += 1
 
-		if self.counter >= self.spawnRate:
+		if self.counter >= self.frameBetweenSpawns:
 			self.asteroids.append({'rect': pygame.Rect(random.randint(0, width - self.SIZE), 0 - self.SIZE, self.SIZE, self.SIZE),
 						'speed': random.randint(self.MIN_SPEED, self.MAX_SPEED),
 						'surface':pygame.transform.scale(self.image, (self.SIZE, self.SIZE))

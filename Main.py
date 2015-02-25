@@ -16,6 +16,7 @@ def main():
 	background = pygame.image.load("M:/groupPy/img/background.png")
 	FIGHTER_image = pygame.image.load("M:/groupPy/img/enemy_1.png")
 	BULLET_image = pygame.image.load("M:/groupPy/img/bullet.png")
+	EXPLOSION_image = pygame.image.load("M:/groupPy/img/explosion_tiles.bmp")
 
 	backgroundRect = background.get_rect()
 
@@ -70,6 +71,12 @@ def main():
 	FIGHTERSIZE = 30
 	FIGHTERSPEED = 12
 	fighters = []
+	
+	# explosion variables
+	frames = 17
+	EXPLOSIONSIZE = 200
+	EXPLOSIONSCALE = 5
+	explosions = []
 
 	fontRenderer = FontRenderer()
 
@@ -177,6 +184,11 @@ def main():
 			for b in bullets[:]:
 				if b['rect'].bottom < 0:
 					bullets.remove(b)
+					
+			for e in explosions[:]:
+				e['frame'] = e['frame'] + 1
+				if e['frame'] >= 18:
+					explosions.remove(e)	
 			
 			# move the player
 			if moveDown and player.bottom < WINDOWHEIGHT:
@@ -204,16 +216,19 @@ def main():
 			for i in bullets:
 				for b in fighters:
 					if (i['rect']).colliderect(b['rect']):
+						explosions.append({'frame': 0,
+						'rect': pygame.Rect(b['rect'].left, b['rect'].top, EXPLOSIONSIZE, EXPLOSIONSIZE),
+						'surface':pygame.transform.scale(EXPLOSION_image, (EXPLOSIONSIZE*17/5, EXPLOSIONSIZE/5))}) 
+						score += 100
 						bullets.remove(i)
 						fighters.remove(b)
-						score += 100
 			
 			# TODO make this the other way round,
 			# bullets should be removed if they are touching asteroids
 			asteroids.remove_if_touching(bullets)
 			
 			playerHealth = asteroids.collide_and_hurt(player, playerHealth)
-				
+
 			for b in fighters:
 				if player.colliderect(b['rect']):
 					fighters.remove(b)
@@ -236,6 +251,8 @@ def main():
 				screen.blit(b['surface'], b['rect'])	
 			for b in bullets:
 				screen.blit(b['surface'], b['rect'])	
+			for b in explosions:
+				screen.blit(b['surface'], b['rect'], pygame.Rect((b['frame']*EXPLOSIONSIZE)/5,0,EXPLOSIONSIZE/5,EXPLOSIONSIZE/5))
 
 			# draw the stats
 			fontRenderer.draw_stat("Score: ", score, (10,10), screen)
