@@ -19,6 +19,17 @@ def main():
 	screen = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT), 0, 32)
 	pygame.display.set_caption('Input')
 
+	# set up gameplay variables
+	moveLeft = False
+	moveRight = False
+	moveUp = False
+	moveDown = False
+
+	MOVESPEED = 8
+
+	gameOver = False
+	gameRunning = True
+
 	# set up the colors
 	BLACK = (0, 0, 0)
 	GREEN = (0, 255, 0)
@@ -27,10 +38,12 @@ def main():
 	RANDOMCOLOUR = (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))
 	WHITE = (255, 255, 255)
 	
-
+	# player variables
 	score = 0
+	playerHealth = 100
+	player = pygame.Rect(300, 700, 32, 32)
 
-
+	# asteroid variables
 	asteroidCounter = 0
 	NEWASTEROID = 20
 	ASTEROIDSIZE = 50
@@ -38,26 +51,13 @@ def main():
 	ASTEROIDMINSPEED = 3
 	asteroids = []
 
+	# fighter variables
 	fighterCounter = 0
 	NEWFIGHTER = 20
 	FIGHTERSIZE = 30
 	FIGHTERSPEED = 12
 	fighters = []
 
-	player = pygame.Rect(300, 700, 32, 32)
-
-
-	playerHealth = 100
-
-	moveLeft = False
-	moveRight = False
-	moveUp = False
-	moveDown = False
-
-	gameOver = False
-	gameRunning = True
-
-	MOVESPEED = 8
 	while gameRunning == True:
 		while gameOver == False:
 			# check for events
@@ -92,7 +92,9 @@ def main():
 					if event.key == K_DOWN or event.key == ord('s'):
 						moveDown = False
 						
-
+			# draw the black background onto the surface
+			screen.blit(background, backgroundRect)	
+			# add new enemies
 			asteroidCounter += 1
 			if asteroidCounter >= NEWASTEROID:
 
@@ -111,13 +113,14 @@ def main():
 							'surface':pygame.transform.scale(FIGHTER_image, (FIGHTERSIZE, FIGHTERSIZE))
 							})
 				fighterCounter = 0
-				
+
 			# Delete baddies that have fallen past the bottom.
 			for b in asteroids[:]:
+
 				if b['rect'].top > WINDOWHEIGHT:
 					asteroids.remove(b)
 					score += 10
-			
+
 			for b in fighters[:]:
 				if b['rect'].top > WINDOWHEIGHT:
 					fighters.remove(b)
@@ -136,6 +139,7 @@ def main():
 				player.left -= MOVESPEED
 			if moveRight and player.right < WINDOWWIDTH:
 				player.right += MOVESPEED
+
 			# move the asteroids
 			for b in asteroids:
 				b['rect'].move_ip(0, b['speed'])
@@ -154,6 +158,7 @@ def main():
 					fighters.remove(b)
 					playerHealth -= 30
 					print (playerHealth)
+
 			#check player health
 			if playerHealth <= 0:
 				gameOver = True
@@ -167,7 +172,6 @@ def main():
 			for b in fighters:
 				screen.blit(b['surface'], b['rect'])		
 			#draw score
-			#draw text on screen
 			font = pygame.font.Font(None, 36)
 			text = font.render("Score: ", 1, (255, 0, 0))
 			scoreDisplay = font.render(str(score), 1, (255, 0, 0))
@@ -217,7 +221,8 @@ def main():
 						gameOver = False
 			if playerHealth > 0:
 					gameOver = False
-				# draw the window onto the screen
+					
+			# draw the window onto the screen
 			pygame.display.update()
 			mainClock.tick(40)
 	
