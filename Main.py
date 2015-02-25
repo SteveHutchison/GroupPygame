@@ -26,85 +26,125 @@ RANDOMCOLOUR = (random.randint(0, 255),random.randint(0, 255),random.randint(0, 
 WHITE = (255, 255, 255)
 
 enemyCounter = 0
-NEWENEMY = 8
+NEWENEMY = 20
 ENEMYSIZE = 50
 ENEMYSPEED = 6
 enemies = []
 
 player = pygame.Rect(300, 700, 32, 32)
 
+playerHealth = 100
+
 moveLeft = False
 moveRight = False
 moveUp = False
 moveDown = False
 
+gameOver = False
+
 MOVESPEED = 8
 
 while True:
     # check for events
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-        if event.type == KEYDOWN:
-            # change the keyboard variables
-            if event.key == K_LEFT or event.key == ord('a'):
-                moveRight = False
-                moveLeft = True
-            if event.key == K_RIGHT or event.key == ord('d'):
-                moveLeft = False
-                moveRight = True
-            if event.key == K_UP or event.key == ord('w'):
-                moveDown = False
-                moveUp = True
-            if event.key == K_DOWN or event.key == ord('s'):
-                moveUp = False
-                moveDown = True
-        if event.type == KEYUP:
-            if event.key == K_ESCAPE:
-                pygame.quit()
-                sys.exit()
-            if event.key == K_LEFT or event.key == ord('a'):
-                moveLeft = False
-            if event.key == K_RIGHT or event.key == ord('d'):
-                moveRight = False
-            if event.key == K_UP or event.key == ord('w'):
-                moveUp = False
-            if event.key == K_DOWN or event.key == ord('s'):
-                moveDown = False
-				
-    enemyCounter += 1
-    if enemyCounter >= NEWENEMY:
+	if gameOver == False:
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				pygame.quit()
+				sys.exit()
+			if event.type == KEYDOWN:
+				# change the keyboard variables
+				if event.key == K_LEFT or event.key == ord('a'):
+					moveRight = False
+					moveLeft = True
+				if event.key == K_RIGHT or event.key == ord('d'):
+					moveLeft = False
+					moveRight = True
+				if event.key == K_UP or event.key == ord('w'):
+					moveDown = False
+					moveUp = True
+				if event.key == K_DOWN or event.key == ord('s'):
+					moveUp = False
+					moveDown = True
+			if event.type == KEYUP:
+				if event.key == K_ESCAPE:
+					pygame.quit()
+					sys.exit()
+				if event.key == K_LEFT or event.key == ord('a'):
+					moveLeft = False
+				if event.key == K_RIGHT or event.key == ord('d'):
+					moveRight = False
+				if event.key == K_UP or event.key == ord('w'):
+					moveUp = False
+				if event.key == K_DOWN or event.key == ord('s'):
+					moveDown = False
 					
-        enemies.append({'rect': pygame.Rect(random.randint(0, WINDOWWIDTH-ENEMYSIZE), 0 - ENEMYSIZE, ENEMYSIZE, ENEMYSIZE),
-                    'speed': ENEMYSPEED,
-					'surface':pygame.transform.scale(enemy_image, (ENEMYSIZE, ENEMYSIZE))
-                    })
-        enemyCounter = 0
-	# draw the black background onto the surface
-    screen.blit(background, backgroundRect)		
-    # move the player
-    if moveDown and player.bottom < WINDOWHEIGHT:
-        player.top += MOVESPEED
-    if moveUp and player.top > 0:
-        player.top -= MOVESPEED
-    if moveLeft and player.left > 0:
-        player.left -= MOVESPEED
-    if moveRight and player.right < WINDOWWIDTH:
-        player.right += MOVESPEED
-	# move the enemies
-    for b in enemies:
-		b['rect'].move_ip(0, ENEMYSPEED)
-	# check for collisions
-    for b in enemies:
-        if player.colliderect(b['rect']):
-			pygame.quit()
-			sys.exit() 
-    # draw the player onto the surface
-    screen.blit(player_image,(player))
-	# draw the enemies
-    for b in enemies:
-        screen.blit(b['surface'], b['rect'])
+		enemyCounter += 1
+		if enemyCounter >= NEWENEMY:
+						
+			enemies.append({'rect': pygame.Rect(random.randint(0, WINDOWWIDTH-ENEMYSIZE), 0 - ENEMYSIZE, ENEMYSIZE, ENEMYSIZE),
+						'speed': ENEMYSPEED,
+						'surface':pygame.transform.scale(enemy_image, (ENEMYSIZE, ENEMYSIZE))
+						})
+			enemyCounter = 0
+			
+		# Delete baddies that have fallen past the bottom.
+		for b in enemies[:]:
+			if b['rect'].top > WINDOWHEIGHT:
+				enemies.remove(b)
+
+		# draw the black background onto the surface
+		screen.blit(background, backgroundRect)		
+		# move the player
+		if moveDown and player.bottom < WINDOWHEIGHT:
+			player.top += MOVESPEED
+		if moveUp and player.top > 0:
+			player.top -= MOVESPEED
+		if moveLeft and player.left > 0:
+			player.left -= MOVESPEED
+		if moveRight and player.right < WINDOWWIDTH:
+			player.right += MOVESPEED
+		# move the enemies
+		for b in enemies:
+			b['rect'].move_ip(0, ENEMYSPEED)
+		# check for collisions
+		for b in enemies:
+			if player.colliderect(b['rect']):
+				enemies.remove(b)
+				playerHealth -= 20
+				print (playerHealth)
+		#check player health
+		if playerHealth <= 0:
+			gameOver = True
+		# draw the player onto the surface
+		screen.blit(player_image,(player))
+		# draw the enemies
+		for b in enemies:
+			screen.blit(b['surface'], b['rect'])
+			
+	if gameOver == True:
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				pygame.quit()
+				sys.exit()
+			if event.type == KEYDOWN:
+				if event.key == K_ESCAPE:
+					pygame.quit()
+					sys.exit()
+				if event.key == ord('r'):
+						for b in enemies:
+							enemies.remove(b)
+						enemies = []
+						playerHealth = 100
+						player = pygame.Rect(300, 700, 32, 32)
+						moveLeft = False
+						moveRight = False
+						moveUp = False
+						moveDown = False
+						gameOver = False
+		if playerHealth > 0:
+				gameOver = False
+	
 	# draw the window onto the screen
-    pygame.display.update()
-    mainClock.tick(40)
+	pygame.display.update()
+	mainClock.tick(40)
+	
