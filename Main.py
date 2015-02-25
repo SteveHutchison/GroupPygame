@@ -21,10 +21,6 @@ def main():
 	BOSS_image = pygame.image.load("M:/groupPy/img/Spaceship.png")
 	BULLET_image = pygame.image.load("img/bullet.png")
 
-
-	#EXPLOSION_image = pygame.image.load("img/explosion_tiles.bmp")
-	#FIGHTER_image = pygame.image.load("img/enemy_1.png")
-
 	#set up music
 	pygame.mixer.music.load('audio/backgroundmusic.mp3')
 
@@ -87,13 +83,6 @@ def main():
 	BOSSSPEEDX = 4
 	bossfighters = []
 
-	# fighter variables
-	# fighterCounter = 0
-	# NEWFIGHTER = 20
-	# FIGHTERSIZE = 30
-	# FIGHTERSPEED = 12
-	# fighters = []
-	
 	# explosion variables
 	EXPLOSIONFRAMES = 17
 	EXPLOSIONSIZE = 200
@@ -152,15 +141,6 @@ def main():
 			asteroids.spawn(WINDOWWIDTH)
 
 			fighters.spawn(WINDOWWIDTH)
-
-			# fighterCounter += 1
-			# if fighterCounter >= NEWFIGHTER:
-							
-			# 	fighters.append({'rect': pygame.Rect(random.randint(0, WINDOWWIDTH-FIGHTERSIZE), 0 - FIGHTERSIZE, FIGHTERSIZE, FIGHTERSIZE),
-			# 				'speed': FIGHTERSPEED,
-			# 				'surface':pygame.transform.scale(FIGHTER_image, (FIGHTERSIZE, FIGHTERSIZE))
-			# 				})
-			# 	fighterCounter = 0
 			
 			bossfighterCounter += 1
 			if bossfighterCounter == NEWBOSS:
@@ -212,11 +192,6 @@ def main():
 			score += asteroids.remove(WINDOWHEIGHT)
 
 			fighters.remove(WINDOWHEIGHT)
-
-			# for b in fighters[:]:
-			# 	if b['rect'].top > WINDOWHEIGHT:
-			# 		fighters.remove(b)
-			# 		score += 10
 					
 			for b in bullets[:]:
 				if b['rect'].bottom < 0:
@@ -266,17 +241,6 @@ def main():
 
 			score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES)
 
-			# check for collisions
-			# for i in bullets:
-			# 	for b in fighters:
-			# 		if (i['rect']).colliderect(b['rect']):
-			# 			explosions.append({'frame': 0,
-			# 			'rect': pygame.Rect(b['rect'].left, b['rect'].top, EXPLOSIONSIZE, EXPLOSIONSIZE),
-			# 			'surface':pygame.transform.scale(EXPLOSION_image, (EXPLOSIONSIZE*EXPLOSIONFRAMES/EXPLOSIONSCALE, EXPLOSIONSIZE/EXPLOSIONSCALE))}) 
-			# 			score += 100
-			# 			bullets.remove(i)
-			# 			fighters.remove(b)
-
 			# TODO make this the other way round,
 			# bullets should be removed if they are touching asteroids
 			asteroids.collide_bullets(bullets)
@@ -284,14 +248,6 @@ def main():
 			playerHealth = asteroids.collide_player(player, playerHealth)
 
 			playerHealth = fighters.collide_player(player, playerHealth)
-
-			# for b in fighters:
-			# 	if player.colliderect(b['rect']):
-			# 		fighters.remove(b)
-			# 		playerHealth -= 30
-			# 		print (playerHealth)
-			# 		effect = pygame.mixer.Sound('audio\explosion.ogg')
-			# 		effect.play()
 
 			#check player health
 			if playerHealth <= 0:
@@ -345,9 +301,6 @@ def main():
 						# reset everything
 						asteroids.remove_all()
 						fighters.remove_all()
-						# for b in fighters:
-						# 	fighters.remove(b)
-						# fighters = []
 						for b in bullets:
 							bullets.remove(b)
 						bullets = []
