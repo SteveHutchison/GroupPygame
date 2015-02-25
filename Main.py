@@ -26,17 +26,8 @@ def main():
 	RANDOMCOLOUR = (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))
 	WHITE = (255, 255, 255)
 	
-	#draw text on screen
+
 	score = 0
-	font = pygame.font.Font(None, 36)
-	text = font.render("Score: ", 1, (255, 0, 0))
-	scoreDisplay = font.render(score, 1, (255, 0, 0))
-	scoreDisplay = font.render(str(score), 1, (255, 0, 0))
-	Scorepos = (100, 10)
-	textpos = (10, 10)
-	background.blit(text, textpos)
-	background.blit(scoreDisplay, Scorepos)
-	
 
 
 	enemyCounter = 0
@@ -108,9 +99,11 @@ def main():
 			for b in enemies[:]:
 				if b['rect'].top > WINDOWHEIGHT:
 					enemies.remove(b)
+					score += 10
 
 			# draw the black background onto the surface
 			screen.blit(background, backgroundRect)		
+			
 			# move the player
 			if moveDown and player.bottom < WINDOWHEIGHT:
 				player.top += MOVESPEED
@@ -136,6 +129,17 @@ def main():
 
 			# draw the player onto the surface
 			screen.blit(player_image,(player))
+			
+			#draw score
+			#draw text on screen
+			font = pygame.font.Font(None, 36)
+			text = font.render("Score: ", 1, (255, 0, 0))
+			scoreDisplay = font.render(str(score), 1, (255, 0, 0))
+			Scorepos = (100, 10)
+			textpos = (10, 10)
+			screen.blit(text, textpos)
+			screen.blit(scoreDisplay, Scorepos)
+			
 			# draw the enemies
 			for b in enemies:
 				screen.blit(b['surface'], b['rect'])
