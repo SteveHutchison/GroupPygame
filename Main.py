@@ -1,6 +1,9 @@
 import pygame, sys, random
 from pygame.locals import *
 
+import fontRenderer
+from fontRenderer import *
+
 def main():
 	# set up pygame
 	pygame.init()
@@ -17,7 +20,9 @@ def main():
 	WINDOWWIDTH = 600
 	WINDOWHEIGHT = 800
 	screen = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT), 0, 32)
-	pygame.display.set_caption('Input')
+	pygame.display.set_caption('Roid Rage')
+
+	font = pygame.font.Font(None, 36)
 
 	# set up gameplay variables
 	moveLeft = False
@@ -57,6 +62,8 @@ def main():
 	FIGHTERSIZE = 30
 	FIGHTERSPEED = 12
 	fighters = []
+
+	fontRenderer = FontRenderer()
 
 	while gameRunning == True:
 		while gameOver == False:
@@ -170,25 +177,10 @@ def main():
 			for b in asteroids:
 				screen.blit(b['surface'], b['rect'])
 			for b in fighters:
-				screen.blit(b['surface'], b['rect'])		
-			#draw score
-			font = pygame.font.Font(None, 36)
-			text = font.render("Score: ", 1, (255, 0, 0))
-			scoreDisplay = font.render(str(score), 1, (255, 0, 0))
-			Scorepos = (100, 10)
-			textpos = (10, 10)
-			screen.blit(text, textpos)
-			screen.blit(scoreDisplay, Scorepos)
-			
-			#draw health
-			#draw text on screen
-			#healthfont = pygame.font.Font(None, 36)
-			healthtext = font.render("Health: ", 1, (255, 0, 0))
-			healthDisplay = font.render(str(playerHealth), 1, (255, 0, 0))
-			healthpos = (100, 40)
-			healthtextpos = (10, 40)
-			screen.blit(healthtext, healthtextpos)
-			screen.blit(healthDisplay, healthpos)
+				screen.blit(b['surface'], b['rect'])	
+
+			fontRenderer.draw_stat("Score: ", score, (10,10), screen)
+			fontRenderer.draw_stat("Health: ", playerHealth, (10, 40), screen)
 
 			# draw the window onto the screen
 			pygame.display.update()
