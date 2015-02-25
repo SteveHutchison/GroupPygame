@@ -8,7 +8,8 @@ def main():
 
 	player_image = pygame.image.load("M:/groupPy/img/player.png")
 	background = pygame.image.load("M:/groupPy/img/background.png")
-	enemy_image = pygame.image.load("M:/groupPy/img/enemy_1.png")
+	ASTEROID_image = pygame.image.load("M:/groupPy/img/enemy_1.png")
+	FIGHTER_image = pygame.image.load("M:/groupPy/img/enemy_1.png")
 
 	backgroundRect = background.get_rect()
 
@@ -27,12 +28,18 @@ def main():
 	WHITE = (255, 255, 255)
 
 
-	enemyCounter = 0
-	NEWENEMY = 8
-	ENEMYSIZE = 50
-	ENEMYSPEED = 6
-	enemies = []
+	asteroidCounter = 0
+	NEWASTEROID = 20
+	ASTEROIDSIZE = 50
+	ASTEROIDMAXSPEED = 5
+	ASTEROIDMINSPEED = 3
+	asteroids = []
 
+	fighterCounter = 0
+	NEWFIGHTER = 20
+	FIGHTERSIZE = 30
+	FIGHTERSPEED = 12
+	fighters = []
 
 	player = pygame.Rect(300, 700, 32, 32)
 
@@ -82,19 +89,32 @@ def main():
 					if event.key == K_DOWN or event.key == ord('s'):
 						moveDown = False
 						
-			enemyCounter += 1
-			if enemyCounter >= NEWENEMY:
+			asteroidCounter += 1
+			if asteroidCounter >= NEWASTEROID:
 							
-				enemies.append({'rect': pygame.Rect(random.randint(0, WINDOWWIDTH-ENEMYSIZE), 0 - ENEMYSIZE, ENEMYSIZE, ENEMYSIZE),
-							'speed': ENEMYSPEED,
-							'surface':pygame.transform.scale(enemy_image, (ENEMYSIZE, ENEMYSIZE))
+				asteroids.append({'rect': pygame.Rect(random.randint(0, WINDOWWIDTH-ASTEROIDSIZE), 0 - ASTEROIDSIZE, ASTEROIDSIZE, ASTEROIDSIZE),
+							'speed': random.randint(ASTEROIDMINSPEED, ASTEROIDMAXSPEED),
+							'surface':pygame.transform.scale(ASTEROID_image, (ASTEROIDSIZE, ASTEROIDSIZE))
 							})
-				enemyCounter = 0
+				asteroidCounter = 0
+				
+			fighterCounter += 1
+			if fighterCounter >= NEWFIGHTER:
+							
+				fighters.append({'rect': pygame.Rect(random.randint(0, WINDOWWIDTH-FIGHTERSIZE), 0 - FIGHTERSIZE, FIGHTERSIZE, FIGHTERSIZE),
+							'speed': FIGHTERSPEED,
+							'surface':pygame.transform.scale(FIGHTER_image, (FIGHTERSIZE, FIGHTERSIZE))
+							})
+				fighterCounter = 0
 				
 			# Delete baddies that have fallen past the bottom.
-			for b in enemies[:]:
+			for b in asteroids[:]:
 				if b['rect'].top > WINDOWHEIGHT:
-					enemies.remove(b)
+					asteroids.remove(b)
+			
+			for b in fighters[:]:
+				if b['rect'].top > WINDOWHEIGHT:
+					fighters.remove(b)
 
 			# draw the black background onto the surface
 			screen.blit(background, backgroundRect)		
@@ -107,15 +127,23 @@ def main():
 				player.left -= MOVESPEED
 			if moveRight and player.right < WINDOWWIDTH:
 				player.right += MOVESPEED
-			# move the enemies
-			for b in enemies:
-				b['rect'].move_ip(0, ENEMYSPEED)
+			# move the asteroids
+			for b in asteroids:
+				b['rect'].move_ip(0, b['speed'])
+			for b in fighters:
+				b['rect'].move_ip(0, FIGHTERSPEED)
 			# check for collisions
 
-			for b in enemies:
+			for b in asteroids:
 				if player.colliderect(b['rect']):
-					enemies.remove(b)
+					asteroids.remove(b)
 					playerHealth -= 20
+					print (playerHealth)
+			
+			for b in fighters:
+				if player.colliderect(b['rect']):
+					fighters.remove(b)
+					playerHealth -= 30
 					print (playerHealth)
 			#check player health
 			if playerHealth <= 0:
@@ -123,8 +151,10 @@ def main():
 
 			# draw the player onto the surface
 			screen.blit(player_image,(player))
-			# draw the enemies
-			for b in enemies:
+			# draw the asteroids
+			for b in asteroids:
+				screen.blit(b['surface'], b['rect'])
+			for b in fighters:
 				screen.blit(b['surface'], b['rect'])
 			# draw the window onto the screen
 			pygame.display.update()
@@ -141,9 +171,9 @@ def main():
 						pygame.quit()
 						sys.exit()
 					if event.key == ord('r'):
-						for b in enemies:
-							enemies.remove(b)
-						enemies = []
+						for b in asteroids:
+							asteroids.remove(b)
+						asteroids = []
 						playerHealth = 100
 						player = pygame.Rect(300, 700, 32, 32)
 						moveLeft = False
