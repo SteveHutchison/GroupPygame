@@ -217,6 +217,9 @@ def main():
 						moveUp = False
 						moveDown = False
 						gameOver = False
+
+			fontRenderer.draw_title("Press R to retry", (100, 300), screen)
+
 			if playerHealth > 0:
 					gameOver = False
 					
