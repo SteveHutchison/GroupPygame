@@ -8,7 +8,7 @@ def main():
 
 	player_image = pygame.image.load("M:/groupPy/img/player.png")
 	background = pygame.image.load("M:/groupPy/img/background.png")
-	ASTEROID_image = pygame.image.load("M:/groupPy/img/enemy_1.png")
+	ASTEROID_image = pygame.image.load("M:/groupPy/img/asteroid_1.png")
 	FIGHTER_image = pygame.image.load("M:/groupPy/img/enemy_1.png")
 
 	backgroundRect = background.get_rect()
@@ -26,6 +26,9 @@ def main():
 	BLUE = (0, 0, 255)
 	RANDOMCOLOUR = (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))
 	WHITE = (255, 255, 255)
+	
+
+	score = 0
 
 
 	asteroidCounter = 0
@@ -89,8 +92,10 @@ def main():
 					if event.key == K_DOWN or event.key == ord('s'):
 						moveDown = False
 						
+
 			asteroidCounter += 1
 			if asteroidCounter >= NEWASTEROID:
+
 							
 				asteroids.append({'rect': pygame.Rect(random.randint(0, WINDOWWIDTH-ASTEROIDSIZE), 0 - ASTEROIDSIZE, ASTEROIDSIZE, ASTEROIDSIZE),
 							'speed': random.randint(ASTEROIDMINSPEED, ASTEROIDMAXSPEED),
@@ -111,13 +116,17 @@ def main():
 			for b in asteroids[:]:
 				if b['rect'].top > WINDOWHEIGHT:
 					asteroids.remove(b)
+					score += 10
 			
 			for b in fighters[:]:
 				if b['rect'].top > WINDOWHEIGHT:
 					fighters.remove(b)
+					score += 10
+
 
 			# draw the black background onto the surface
 			screen.blit(background, backgroundRect)		
+			
 			# move the player
 			if moveDown and player.bottom < WINDOWHEIGHT:
 				player.top += MOVESPEED
@@ -151,11 +160,23 @@ def main():
 
 			# draw the player onto the surface
 			screen.blit(player_image,(player))
+
 			# draw the asteroids
 			for b in asteroids:
 				screen.blit(b['surface'], b['rect'])
 			for b in fighters:
-				screen.blit(b['surface'], b['rect'])
+				screen.blit(b['surface'], b['rect'])		
+			#draw score
+			#draw text on screen
+			font = pygame.font.Font(None, 36)
+			text = font.render("Score: ", 1, (255, 0, 0))
+			scoreDisplay = font.render(str(score), 1, (255, 0, 0))
+			Scorepos = (100, 10)
+			textpos = (10, 10)
+			screen.blit(text, textpos)
+			screen.blit(scoreDisplay, Scorepos)
+			
+
 			# draw the window onto the screen
 			pygame.display.update()
 			mainClock.tick(40)
@@ -174,7 +195,11 @@ def main():
 						for b in asteroids:
 							asteroids.remove(b)
 						asteroids = []
+						for b in fighters:
+							fighters.remove(b)
+						fighters = []
 						playerHealth = 100
+						score = 0
 						player = pygame.Rect(300, 700, 32, 32)
 						moveLeft = False
 						moveRight = False
