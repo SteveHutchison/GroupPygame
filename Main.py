@@ -14,6 +14,7 @@ def main():
 	ASTEROID_image = pygame.image.load("M:/groupPy/img/Rock.png")
 	FIGHTER_image = pygame.image.load("M:/groupPy/img/enemy_1.png")
 	BULLET_image = pygame.image.load("M:/groupPy/img/bullet.png")
+	BOSS_image = pygame.image.load("M:/groupPy/img/Spaceship.png")
 
 	backgroundRect = background.get_rect()
 
@@ -68,6 +69,16 @@ def main():
 	ASTEROIDMAXSPEED = 5
 	ASTEROIDMINSPEED = 3
 	asteroids = []
+	
+	# boss fighter variables
+	bossfighterCounter = 0
+	boss_x = 0
+	boss_y = 0
+	NEWBOSS = 200
+	BOSSSIZE = 96
+	BOSSSPEEDY = 4
+	BOSSSPEEDX = 4
+	bossfighters = []
 
 	# fighter variables
 	fighterCounter = 0
@@ -119,7 +130,12 @@ def main():
 						moveDown = False
 					if event.key == K_SPACE:
 						shooting = False
-						
+				
+			# power limiter
+			if power < 1:
+				power = 1
+			if power > 4:
+				power = 4
 			# draw the black background onto the surface
 			screen.blit(background, backgroundRect)	
 			# add new enemies
@@ -140,7 +156,18 @@ def main():
 							'surface':pygame.transform.scale(FIGHTER_image, (FIGHTERSIZE, FIGHTERSIZE))
 							})
 				fighterCounter = 0
+			
+			bossfighterCounter += 1
+			if bossfighterCounter == NEWBOSS:
+							
+				bossfighters.append({'rect': pygame.Rect(316, 0 - BOSSSIZE, BOSSSIZE, BOSSSIZE),
+							'speed': (BOSSSPEEDX, BOSSSPEEDY),
+							'surface':pygame.transform.scale(BOSS_image, (BOSSSIZE, BOSSSIZE))
+							})
+				boss_x = 316
+				boss_y = 800 - (0 - BOSSSIZE)
 
+			
 			if shooting == True:
 				bulletCounter += 1
 				if bulletCounter >= NEWBULLET:
@@ -150,29 +177,29 @@ def main():
 								})
 					if power >= 2:
 						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
-									'speed': (BULLETSPEEDX, BULLETSPEEDY), 
+									'speed': (BULLETSPEEDX, 0.95*BULLETSPEEDY), 
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 									})
 						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
-									'speed':  (-BULLETSPEEDX, BULLETSPEEDY),
+									'speed':  (-BULLETSPEEDX, 0.95*BULLETSPEEDY),
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 									})
 					if power >= 3:			
 						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
-									'speed': (2*BULLETSPEEDX, 0.95*BULLETSPEEDY), 
+									'speed': (2*BULLETSPEEDX, 0.9*BULLETSPEEDY), 
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 									})
 						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
-									'speed':  (-2*BULLETSPEEDX, 0.95*BULLETSPEEDY),
+									'speed':  (-2*BULLETSPEEDX, 0.9*BULLETSPEEDY),
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 									})
 					if power >= 4:	
 						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
-									'speed': (3*BULLETSPEEDX, 0.85*BULLETSPEEDY), 
+									'speed': (3*BULLETSPEEDX, 0.8*BULLETSPEEDY), 
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 									})
 						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
-									'speed':  (-3*BULLETSPEEDX, 0.85*BULLETSPEEDY),
+									'speed':  (-3*BULLETSPEEDX, 0.8*BULLETSPEEDY),
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 									})
 					bulletCounter = 0
@@ -215,6 +242,18 @@ def main():
 				b['rect'].move_ip(0, b['speed'])
 			for b in fighters:
 				b['rect'].move_ip(0, b['speed'])
+			for b in bossfighters:
+				if boss_y > 650:
+					b['rect'].move_ip(0, BOSSSPEEDY)
+					boss_y -= BOSSSPEEDY
+					print (boss_y)
+				if boss_x < player_x-48:
+					b['rect'].move_ip(BOSSSPEEDX, 0)
+					boss_x += BOSSSPEEDX
+				if boss_x > player_x-48:
+					b['rect'].move_ip(-BOSSSPEEDX, 0)
+					boss_x -= BOSSSPEEDX
+				
 			for b in bullets:
 				b['rect'].move_ip(b['speed'])
 			# check for collisions
@@ -257,12 +296,11 @@ def main():
 				screen.blit(b['surface'], b['rect'])	
 			for b in bullets:
 				screen.blit(b['surface'], b['rect'])	
-
-
+			for b in bossfighters:
+				screen.blit(b['surface'], b['rect'])	
 
 			fontRenderer.draw_stat("Score: ", score, (10,10), screen)
 			fontRenderer.draw_stat("Health: ", playerHealth, (10, 40), screen)
-
 
 			# draw the window onto the screen
 			pygame.display.update()
@@ -288,6 +326,9 @@ def main():
 						for b in bullets:
 							bullets.remove(b)
 						bullets = []
+						for b in bossfighters:
+							bossfighters.remove(b)
+						bossfighters = []
 						playerHealth = 100
 						score = 0
 						player = pygame.Rect(300, 700, 32, 32)
