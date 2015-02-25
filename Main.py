@@ -18,6 +18,15 @@ def main():
 	screen = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT), 0, 32)
 	pygame.display.set_caption('Input')
 
+	# set up gameplay variables
+	moveLeft = False
+	moveRight = False
+	moveUp = False
+	moveDown = False
+
+	gameOver = False
+	gameRunning = True
+
 	# set up the colors
 	BLACK = (0, 0, 0)
 	GREEN = (0, 255, 0)
@@ -26,29 +35,16 @@ def main():
 	RANDOMCOLOUR = (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))
 	WHITE = (255, 255, 255)
 	
-
+	# player variables
 	score = 0
-
+	playerHealth = 100
+	player = pygame.Rect(300, 700, 32, 32)
 
 	enemyCounter = 0
 	NEWENEMY = 8
 	ENEMYSIZE = 50
 	ENEMYSPEED = 6
 	enemies = []
-
-
-	player = pygame.Rect(300, 700, 32, 32)
-
-
-	playerHealth = 100
-
-	moveLeft = False
-	moveRight = False
-	moveUp = False
-	moveDown = False
-
-	gameOver = False
-	gameRunning = True
 
 	MOVESPEED = 8
 	while gameRunning == True:
@@ -85,7 +81,10 @@ def main():
 					if event.key == K_DOWN or event.key == ord('s'):
 						moveDown = False
 						
+			# draw the black background onto the surface
+			screen.blit(background, backgroundRect)	
 
+			# add new enemies
 			enemyCounter += 1
 			if enemyCounter >= NEWENEMY:
 							
@@ -95,14 +94,12 @@ def main():
 							})
 				enemyCounter = 0
 				
-			# Delete baddies that have fallen past the bottom.
+			# Delete enemies that have fallen past the bottom.
 			for b in enemies[:]:
 				if b['rect'].top > WINDOWHEIGHT:
 					enemies.remove(b)
 					score += 10
-
-			# draw the black background onto the surface
-			screen.blit(background, backgroundRect)		
+	
 			
 			# move the player
 			if moveDown and player.bottom < WINDOWHEIGHT:
@@ -113,16 +110,18 @@ def main():
 				player.left -= MOVESPEED
 			if moveRight and player.right < WINDOWWIDTH:
 				player.right += MOVESPEED
+
 			# move the enemies
 			for b in enemies:
 				b['rect'].move_ip(0, ENEMYSPEED)
-			# check for collisions
 
+			# check for collisions
 			for b in enemies:
 				if player.colliderect(b['rect']):
 					enemies.remove(b)
 					playerHealth -= 20
 					print (playerHealth)
+
 			#check player health
 			if playerHealth <= 0:
 				gameOver = True
@@ -131,7 +130,6 @@ def main():
 			screen.blit(player_image,(player))
 			
 			#draw score
-			#draw text on screen
 			font = pygame.font.Font(None, 36)
 			text = font.render("Score: ", 1, (255, 0, 0))
 			scoreDisplay = font.render(str(score), 1, (255, 0, 0))
