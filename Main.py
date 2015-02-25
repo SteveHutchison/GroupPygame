@@ -25,6 +25,18 @@ def main():
 	BLUE = (0, 0, 255)
 	RANDOMCOLOUR = (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))
 	WHITE = (255, 255, 255)
+	
+	#draw text on screen
+	score = 0
+	font = pygame.font.Font(None, 36)
+	text = font.render("Score: ", 1, (255, 0, 0))
+	scoreDisplay = font.render(score, 1, (255, 0, 0))
+	scoreDisplay = font.render(str(score), 1, (255, 0, 0))
+	Scorepos = (100, 10)
+	textpos = (10, 10)
+	background.blit(text, textpos)
+	background.blit(scoreDisplay, Scorepos)
+	
 
 	enemyCounter = 0
 	NEWENEMY = 8
@@ -104,6 +116,8 @@ def main():
 				sys.exit() 
 		# draw the player onto the surface
 		screen.blit(player_image,(player))
+		#draw score
+		#screen.blit(scoreDisplay, (40, 10))
 		# draw the enemies
 		for b in enemies:
 			screen.blit(b['surface'], b['rect'])
