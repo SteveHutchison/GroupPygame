@@ -8,7 +8,7 @@ def main():
 
 	player_image = pygame.image.load("M:/groupPy/img/player.png")
 	background = pygame.image.load("M:/groupPy/img/background.png")
-	ASTEROID_image = pygame.image.load("M:/groupPy/img/asteroid_1.png")
+	ASTEROID_image = pygame.image.load("M:/groupPy/img/Rock.png")
 	FIGHTER_image = pygame.image.load("M:/groupPy/img/enemy_1.png")
 
 	backgroundRect = background.get_rect()
@@ -180,6 +180,15 @@ def main():
 			screen.blit(text, textpos)
 			screen.blit(scoreDisplay, Scorepos)
 			
+			#draw health
+			#draw text on screen
+			#healthfont = pygame.font.Font(None, 36)
+			healthtext = font.render("Health: ", 1, (255, 0, 0))
+			healthDisplay = font.render(str(playerHealth), 1, (255, 0, 0))
+			healthpos = (100, 40)
+			healthtextpos = (10, 40)
+			screen.blit(healthtext, healthtextpos)
+			screen.blit(healthDisplay, healthpos)
 
 			# draw the window onto the screen
 			pygame.display.update()
