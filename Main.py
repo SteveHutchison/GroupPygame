@@ -17,6 +17,8 @@ def main():
 	EXPLOSION_image = pygame.image.load("M:/groupPy/img/explosion_tiles.bmp")
 
 	backgroundRect = background.get_rect()
+	backgroundArea = backgroundRect
+	backgroundY = 0;
 
 	# set up the window
 	WINDOWWIDTH = 600
@@ -79,7 +81,7 @@ def main():
 	fighters = []
 	
 	# explosion variables
-	frames = 17
+	EXPLOSIONFRAMES = 17
 	EXPLOSIONSIZE = 200
 	EXPLOSIONSCALE = 5
 	explosions = []
@@ -129,7 +131,7 @@ def main():
 						shooting = False
 						
 			# draw the black background onto the surface
-			screen.blit(background, backgroundRect)	
+			
 			# add new enemies
 			asteroidCounter += 1
 			if asteroidCounter >= NEWASTEROID:
@@ -204,9 +206,12 @@ def main():
 				if e['frame'] >= 18:
 					explosions.remove(e)
 
-
 			# draw the black background onto the surface
-			screen.blit(background, backgroundRect)		
+			backgroundY = backgroundY + 1
+			if backgroundY == 800:
+				backgroundY = 0
+			screen.blit(background, (0,backgroundY))
+			screen.blit(background,(0, backgroundY-800))	
 			
 			# move the player
 			if moveDown and player.bottom < WINDOWHEIGHT:
@@ -236,7 +241,7 @@ def main():
 					if (i['rect']).colliderect(b['rect']):
 						explosions.append({'frame': 0,
 						'rect': pygame.Rect(b['rect'].left, b['rect'].top, EXPLOSIONSIZE, EXPLOSIONSIZE),
-						'surface':pygame.transform.scale(EXPLOSION_image, (EXPLOSIONSIZE*17/5, EXPLOSIONSIZE/5))}) 
+						'surface':pygame.transform.scale(EXPLOSION_image, (EXPLOSIONSIZE*EXPLOSIONFRAMES/EXPLOSIONSCALE, EXPLOSIONSIZE/EXPLOSIONSCALE))}) 
 						score += 100
 						bullets.remove(i)
 						fighters.remove(b)
