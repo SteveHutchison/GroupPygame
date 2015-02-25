@@ -5,12 +5,13 @@ def main():
 	# set up pygame
 	pygame.init()
 	mainClock = pygame.time.Clock()
-
+	#load in images
 	player_image = pygame.image.load("M:/groupPy/img/player.png")
 	background = pygame.image.load("M:/groupPy/img/background.png")
 	ASTEROID_image = pygame.image.load("M:/groupPy/img/Rock.png")
 	FIGHTER_image = pygame.image.load("M:/groupPy/img/enemy_1.png")
 
+	#set background rect equal to the size of the background image
 	backgroundRect = background.get_rect()
 
 	# set up the window
@@ -58,6 +59,7 @@ def main():
 	FIGHTERSPEED = 12
 	fighters = []
 
+	#Game loop
 	while gameRunning == True:
 		while gameOver == False:
 			# check for events
@@ -146,13 +148,13 @@ def main():
 			for b in fighters:
 				b['rect'].move_ip(0, FIGHTERSPEED)
 			# check for collisions
-
+			#asteroid collisions
 			for b in asteroids:
 				if player.colliderect(b['rect']):
 					asteroids.remove(b)
 					playerHealth -= 20
 					print (playerHealth)
-			
+			#fighter collisions
 			for b in fighters:
 				if player.colliderect(b['rect']):
 					fighters.remove(b)
@@ -181,8 +183,6 @@ def main():
 			screen.blit(scoreDisplay, Scorepos)
 			
 			#draw health
-			#draw text on screen
-			#healthfont = pygame.font.Font(None, 36)
 			healthtext = font.render("Health: ", 1, (255, 0, 0))
 			healthDisplay = font.render(str(playerHealth), 1, (255, 0, 0))
 			healthpos = (100, 40)
