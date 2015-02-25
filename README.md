@@ -9,7 +9,16 @@ The project includes a launch.bat file which you should be abled to double click
 ---
 ## Using git
 
-This is supposed to be a quick and easy guide to getting up to speed with Git for use in teams. It is not supposed to be an exhaustive list of all Git's features.
+This is supposed to be a quick and easy guide to getting up to speed with Git for use in teams. It is not supposed to be an exhaustive list of all Git's features.  
+
+### Overview
+
+A simplyfied version of the entire proccess goes like this.
+
+1. Code
+2. Commit
+3. Pull (fetch and merge)
+4. Push
 
 ### Learning Aids
 
@@ -141,11 +150,17 @@ Fixing this is surpisingly simple, just open up the file and delete the text you
 
 ## Sharing your changes
 
-TODO: more description here
+Before you share you code with everyone make sure to test your code and commit any changes you've made.  
 
-Push to your github repo
+1. Fetch changes from the upstream repo
+2. Merge changes
+3. Resolve conflicts
 
-create pull requests
+If it takes a while to merge and test any conflicts make sure to fetch again incase there when any changes in the mean time.
+
+There are two basic ways you can share your changes with everyone. You can push them to your own repo and create a pull request, or if you have permission you can push it straight to the upstream repo where everyone can access it instantly.
+
+TODO: more detail here
 
 ## Credits
 
