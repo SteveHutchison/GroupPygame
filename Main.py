@@ -179,6 +179,7 @@ def main():
 			for b in fighters:
 				screen.blit(b['surface'], b['rect'])	
 
+			# draw the stats
 			fontRenderer.draw_stat("Score: ", score, (10,10), screen)
 			fontRenderer.draw_stat("Health: ", playerHealth, (10, 40), screen)
 
