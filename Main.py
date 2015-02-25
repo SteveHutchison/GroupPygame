@@ -27,10 +27,8 @@ def main():
 	RANDOMCOLOUR = (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))
 	WHITE = (255, 255, 255)
 	
-
 	score = 0
-
-
+	
 	asteroidCounter = 0
 	NEWASTEROID = 20
 	ASTEROIDSIZE = 50
@@ -169,8 +167,8 @@ def main():
 			#draw score
 			#draw text on screen
 			font = pygame.font.Font(None, 36)
-			text = font.render("Score: ", 1, (255, 0, 0))
-			scoreDisplay = font.render(str(score), 1, (255, 0, 0))
+			text = font.render("Score: ", 1, RED)
+			scoreDisplay = font.render(str(score), 1, RED)
 			Scorepos = (100, 10)
 			textpos = (10, 10)
 			screen.blit(text, textpos)
