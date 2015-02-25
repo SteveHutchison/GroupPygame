@@ -31,7 +31,8 @@ class AsteroidFactory:
 		if self.counter >= self.frameBetweenSpawns:
 			self.asteroids.append({'rect': pygame.Rect(random.randint(0, width - self.SIZE), 0 - self.SIZE, self.SIZE, self.SIZE),
 						'speed': random.randint(self.MIN_SPEED, self.MAX_SPEED),
-						'surface':pygame.transform.scale(self.image, (self.SIZE, self.SIZE))
+						'surface':pygame.transform.scale(self.image, (self.SIZE, self.SIZE)),
+						'health': 100
 						})
 			self.counter = 0
 
@@ -41,6 +42,8 @@ class AsteroidFactory:
 				if a['rect'].top > height:
 					self.asteroids.remove(a)
 					score += self.reward
+				elif a['health'] <= 0:
+					self.asteroids.remove(a)
 
 	def move(self):
 		for a in self.asteroids:
@@ -50,13 +53,14 @@ class AsteroidFactory:
 		for a in self.asteroids:
 			target.blit(a['surface'], a['rect'])
 
-	def remove_if_touching(self, bullets):
+	def collide_bullets(self, bullets):
 		for a in self.asteroids:
 			for b in bullets:
 				if (b['rect']).colliderect(a['rect']):
 					bullets.remove(b)
+					a['health'] -= 10
 
-	def collide_and_hurt(self, playerRect, playerHealth):
+	def collide_player(self, playerRect, playerHealth):
 		for a in self.asteroids:
 			if playerRect.colliderect(a['rect']):
 				self.asteroids.remove(a)

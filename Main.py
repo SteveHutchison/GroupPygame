@@ -111,16 +111,16 @@ def main():
 				if event.type == KEYDOWN:
 					# change the keyboard variables
 					if event.key == K_LEFT or event.key == ord('a'):
-						moveRight = False
+						#moveRight = False
 						moveLeft = True
 					if event.key == K_RIGHT or event.key == ord('d'):
-						moveLeft = False
+						#moveLeft = False
 						moveRight = True
 					if event.key == K_UP or event.key == ord('w'):
-						moveDown = False
+						#moveDown = False
 						moveUp = True
 					if event.key == K_DOWN or event.key == ord('s'):
-						moveUp = False
+						#moveUp = False
 						moveDown = True
 					if event.key == K_SPACE:
 						shooting = True
@@ -267,9 +267,9 @@ def main():
 
 			# TODO make this the other way round,
 			# bullets should be removed if they are touching asteroids
-			asteroids.remove_if_touching(bullets)
+			asteroids.collide_bullets(bullets)
 			
-			playerHealth = asteroids.collide_and_hurt(player, playerHealth)
+			playerHealth = asteroids.collide_player(player, playerHealth)
 
 			for b in fighters:
 				if player.colliderect(b['rect']):
@@ -285,7 +285,8 @@ def main():
 
 
 			# DRAW PHASE
-			# draw the black background onto the surface
+
+			# draw the scrolling backgound
 			backgroundY = backgroundY + 1
 			if backgroundY == 800:
 				backgroundY = 0
@@ -325,8 +326,8 @@ def main():
 						pygame.quit()
 						sys.exit()
 					if event.key == ord('r'):
+						# reset everything
 						asteroids.remove_all()
-
 						for b in fighters:
 							fighters.remove(b)
 						fighters = []
@@ -342,11 +343,12 @@ def main():
 						player = pygame.Rect(300, 700, 32, 32)
 						player_x = 316
 						player_y = 700
+						shooting = False
+						gameOver = False
 						moveLeft = False
 						moveRight = False
-						moveUp = False
 						moveDown = False
-						gameOver = False
+						moveUp = False
 
 			fontRenderer.draw_title("Press R to retry", (100, 300), screen)
 
