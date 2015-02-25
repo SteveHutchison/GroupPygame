@@ -142,7 +142,7 @@ def main():
 						moveDown = False
 					if event.key == K_SPACE:
 						shooting = False
-						
+
 			# UPDATE EVERYTHING
 			asteroids.spawn(WINDOWWIDTH)
 
@@ -220,13 +220,6 @@ def main():
 				if e['frame'] >= 18:
 					explosions.remove(e)
 
-			# draw the black background onto the surface
-			backgroundY = backgroundY + 1
-			if backgroundY == 800:
-				backgroundY = 0
-			screen.blit(background, (0,backgroundY))
-			screen.blit(background,(0, backgroundY-800))
-
 			# move the player
 			if moveDown and player.bottom < WINDOWHEIGHT:
 				player.top += MOVESPEED
@@ -250,7 +243,7 @@ def main():
 				if boss_y > 650:
 					b['rect'].move_ip(0, BOSSSPEEDY)
 					boss_y -= BOSSSPEEDY
-					print (boss_y)
+					#print (boss_y)
 				if boss_x < player_x-48:
 					b['rect'].move_ip(BOSSSPEEDX, 0)
 					boss_x += BOSSSPEEDX
@@ -292,20 +285,26 @@ def main():
 
 
 			# DRAW PHASE
-			screen.blit(background, backgroundRect)
+			# draw the black background onto the surface
+			backgroundY = backgroundY + 1
+			if backgroundY == 800:
+				backgroundY = 0
+				
+			screen.blit(background, (0,backgroundY))
+			screen.blit(background,(0, backgroundY-800))
 
 			screen.blit(player_image,(player))
 
 			asteroids.draw(screen)
 
-			for b in fighters:
-				screen.blit(b['surface'], b['rect'])	
+			for f in fighters:
+				screen.blit(f['surface'], f['rect'])	
 			for b in bullets:
 				screen.blit(b['surface'], b['rect'])	
 			for b in bossfighters:
 				screen.blit(b['surface'], b['rect'])	
-			for b in explosions:
-				screen.blit(b['surface'], b['rect'], pygame.Rect((b['frame']*EXPLOSIONSIZE)/5,0,EXPLOSIONSIZE/5,EXPLOSIONSIZE/5))
+			for e in explosions:
+				screen.blit(e['surface'], e['rect'], pygame.Rect((e['frame']*EXPLOSIONSIZE)/5,0,EXPLOSIONSIZE/5,EXPLOSIONSIZE/5))
 
 			# draw the stats
 			fontRenderer.draw_stat("Score: ", score, (10,10), screen)
