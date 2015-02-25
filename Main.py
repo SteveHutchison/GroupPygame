@@ -13,6 +13,7 @@ def main():
 	background = pygame.image.load("M:/groupPy/img/background.png")
 	ASTEROID_image = pygame.image.load("M:/groupPy/img/Rock.png")
 	FIGHTER_image = pygame.image.load("M:/groupPy/img/enemy_1.png")
+	BULLET_image = pygame.image.load("M:/groupPy/img/bullet.png")
 
 	backgroundRect = background.get_rect()
 
@@ -42,11 +43,23 @@ def main():
 	BLUE = (0, 0, 255)
 	RANDOMCOLOUR = (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))
 	WHITE = (255, 255, 255)
-	
+
 	# player variables
 	score = 0
 	playerHealth = 100
 	player = pygame.Rect(300, 700, 32, 32)
+	player_x = 316
+	player_y = 700
+	shooting = False
+	power = 1
+	
+	# player bullet variables
+	bulletCounter = 0
+	NEWBULLET = 5
+	BULLETSIZE = 8
+	BULLETSPEEDY = -25
+	BULLETSPEEDX = 5
+	bullets = []
 
 	# asteroid variables
 	asteroidCounter = 0
@@ -86,6 +99,12 @@ def main():
 					if event.key == K_DOWN or event.key == ord('s'):
 						moveUp = False
 						moveDown = True
+					if event.key == K_SPACE:
+						shooting = True
+					if event.key == ord('z'):
+						power += 1
+					if event.key == ord('x'):
+						power -= 1
 				if event.type == KEYUP:
 					if event.key == K_ESCAPE:
 						pygame.quit()
@@ -98,6 +117,8 @@ def main():
 						moveUp = False
 					if event.key == K_DOWN or event.key == ord('s'):
 						moveDown = False
+					if event.key == K_SPACE:
+						shooting = False
 						
 			# draw the black background onto the surface
 			screen.blit(background, backgroundRect)	
@@ -105,7 +126,6 @@ def main():
 			asteroidCounter += 1
 			if asteroidCounter >= NEWASTEROID:
 
-							
 				asteroids.append({'rect': pygame.Rect(random.randint(0, WINDOWWIDTH-ASTEROIDSIZE), 0 - ASTEROIDSIZE, ASTEROIDSIZE, ASTEROIDSIZE),
 							'speed': random.randint(ASTEROIDMINSPEED, ASTEROIDMAXSPEED),
 							'surface':pygame.transform.scale(ASTEROID_image, (ASTEROIDSIZE, ASTEROIDSIZE))
@@ -121,6 +141,41 @@ def main():
 							})
 				fighterCounter = 0
 
+			if shooting == True:
+				bulletCounter += 1
+				if bulletCounter >= NEWBULLET:
+					bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
+								'speed':  (0, BULLETSPEEDY),
+								'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
+								})
+					if power >= 2:
+						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
+									'speed': (BULLETSPEEDX, BULLETSPEEDY), 
+									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
+									})
+						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
+									'speed':  (-BULLETSPEEDX, BULLETSPEEDY),
+									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
+									})
+					if power >= 3:			
+						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
+									'speed': (2*BULLETSPEEDX, 0.95*BULLETSPEEDY), 
+									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
+									})
+						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
+									'speed':  (-2*BULLETSPEEDX, 0.95*BULLETSPEEDY),
+									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
+									})
+					if power >= 4:	
+						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
+									'speed': (3*BULLETSPEEDX, 0.85*BULLETSPEEDY), 
+									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
+									})
+						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
+									'speed':  (-3*BULLETSPEEDX, 0.85*BULLETSPEEDY),
+									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
+									})
+					bulletCounter = 0
 			# Delete baddies that have fallen past the bottom.
 			for b in asteroids[:]:
 
@@ -132,6 +187,10 @@ def main():
 				if b['rect'].top > WINDOWHEIGHT:
 					fighters.remove(b)
 					score += 10
+					
+			for b in bullets[:]:
+				if b['rect'].bottom < 0:
+					bullets.remove(b)
 
 
 			# draw the black background onto the surface
@@ -140,26 +199,44 @@ def main():
 			# move the player
 			if moveDown and player.bottom < WINDOWHEIGHT:
 				player.top += MOVESPEED
+				player_y += MOVESPEED
 			if moveUp and player.top > 0:
 				player.top -= MOVESPEED
+				player_y -= MOVESPEED
 			if moveLeft and player.left > 0:
 				player.left -= MOVESPEED
+				player_x -= MOVESPEED
 			if moveRight and player.right < WINDOWWIDTH:
 				player.right += MOVESPEED
+				player_x += MOVESPEED
 
 			# move the asteroids
 			for b in asteroids:
 				b['rect'].move_ip(0, b['speed'])
 			for b in fighters:
-				b['rect'].move_ip(0, FIGHTERSPEED)
+				b['rect'].move_ip(0, b['speed'])
+			for b in bullets:
+				b['rect'].move_ip(b['speed'])
 			# check for collisions
 
+			for i in bullets:
+				for b in fighters:
+					if (i['rect']).colliderect(b['rect']):
+						bullets.remove(i)
+						fighters.remove(b)
+						score += 100
+						
+			for b in asteroids:
+				for i in bullets:
+					if (i['rect']).colliderect(b['rect']):
+						bullets.remove(i)
+						
 			for b in asteroids:
 				if player.colliderect(b['rect']):
 					asteroids.remove(b)
 					playerHealth -= 20
 					print (playerHealth)
-			
+				
 			for b in fighters:
 				if player.colliderect(b['rect']):
 					fighters.remove(b)
@@ -178,14 +255,19 @@ def main():
 				screen.blit(b['surface'], b['rect'])
 			for b in fighters:
 				screen.blit(b['surface'], b['rect'])	
+			for b in bullets:
+				screen.blit(b['surface'], b['rect'])	
+
+
 
 			# draw the stats
 			fontRenderer.draw_stat("Score: ", score, (10,10), screen)
 			fontRenderer.draw_stat("Health: ", playerHealth, (10, 40), screen)
 
+
 			# draw the window onto the screen
 			pygame.display.update()
-			mainClock.tick(40)
+			mainClock.tick(100)
 
 				
 		while gameOver == True:
@@ -204,9 +286,14 @@ def main():
 						for b in fighters:
 							fighters.remove(b)
 						fighters = []
+						for b in bullets:
+							bullets.remove(b)
+						bullets = []
 						playerHealth = 100
 						score = 0
 						player = pygame.Rect(300, 700, 32, 32)
+						player_x = 316
+						player_y = 700
 						moveLeft = False
 						moveRight = False
 						moveUp = False
