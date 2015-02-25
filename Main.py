@@ -9,12 +9,18 @@ def main():
 	pygame.init()
 	mainClock = pygame.time.Clock()
 
-	player_image = pygame.image.load("M:/groupPy/img/player.png")
-	background = pygame.image.load("M:/groupPy/img/background.png")
-	ASTEROID_image = pygame.image.load("M:/groupPy/img/Rock.png")
-	FIGHTER_image = pygame.image.load("M:/groupPy/img/enemy_1.png")
-	BULLET_image = pygame.image.load("M:/groupPy/img/bullet.png")
+
 	BOSS_image = pygame.image.load("M:/groupPy/img/Spaceship.png")
+	player_image = pygame.image.load("img/player.png")
+	background = pygame.image.load("img/background.png")
+	ASTEROID_image = pygame.image.load("img/Rock.png")
+	FIGHTER_image = pygame.image.load("img/enemy_1.png")
+	BULLET_image = pygame.image.load("img/bullet.png")
+	EXPLOSION_image = pygame.image.load("img/explosion_tiles.bmp")
+
+	#set up music
+	pygame.mixer.music.load('audio/backgroundmusic.mp3')
+	
 
 	backgroundRect = background.get_rect()
 
@@ -52,6 +58,7 @@ def main():
 	player_x = 316
 	player_y = 700
 	shooting = False
+	max_power = 4
 	power = 1
 	
 	# player bullet variables
@@ -86,10 +93,18 @@ def main():
 	FIGHTERSIZE = 30
 	FIGHTERSPEED = 12
 	fighters = []
+	
+	# explosion variables
+	frames = 17
+	EXPLOSIONSIZE = 200
+	EXPLOSIONSCALE = 5
+	explosions = []
 
 	fontRenderer = FontRenderer()
 
 	while gameRunning == True:
+		# start music loop
+		pygame.mixer.music.play(5) 
 		while gameOver == False:
 			# check for events
 			for event in pygame.event.get():
@@ -112,9 +127,9 @@ def main():
 						moveDown = True
 					if event.key == K_SPACE:
 						shooting = True
-					if event.key == ord('z'):
+					if event.key == ord('z') and power < max_power:
 						power += 1
-					if event.key == ord('x'):
+					if event.key == ord('x') and power > 1:
 						power -= 1
 				if event.type == KEYUP:
 					if event.key == K_ESCAPE:
@@ -205,11 +220,10 @@ def main():
 					bulletCounter = 0
 			# Delete baddies that have fallen past the bottom.
 			for b in asteroids[:]:
-
 				if b['rect'].top > WINDOWHEIGHT:
 					asteroids.remove(b)
 					score += 10
-
+			
 			for b in fighters[:]:
 				if b['rect'].top > WINDOWHEIGHT:
 					fighters.remove(b)
@@ -218,6 +232,11 @@ def main():
 			for b in bullets[:]:
 				if b['rect'].bottom < 0:
 					bullets.remove(b)
+					
+			for e in explosions[:]:
+				e['frame'] = e['frame'] + 1
+				if e['frame'] >= 18:
+					explosions.remove(e)
 
 
 			# draw the black background onto the surface
@@ -261,9 +280,12 @@ def main():
 			for i in bullets:
 				for b in fighters:
 					if (i['rect']).colliderect(b['rect']):
+						explosions.append({'frame': 0,
+						'rect': pygame.Rect(b['rect'].left, b['rect'].top, EXPLOSIONSIZE, EXPLOSIONSIZE),
+						'surface':pygame.transform.scale(EXPLOSION_image, (EXPLOSIONSIZE*17/5, EXPLOSIONSIZE/5))}) 
+						score += 100
 						bullets.remove(i)
 						fighters.remove(b)
-						score += 100
 						
 			for b in asteroids:
 				for i in bullets:
@@ -275,12 +297,16 @@ def main():
 					asteroids.remove(b)
 					playerHealth -= 20
 					print (playerHealth)
+					effect = pygame.mixer.Sound('audio\explosion.ogg')
+					effect.play()
 				
 			for b in fighters:
 				if player.colliderect(b['rect']):
 					fighters.remove(b)
 					playerHealth -= 30
 					print (playerHealth)
+					effect = pygame.mixer.Sound('audio\explosion.ogg')
+					effect.play()
 
 			#check player health
 			if playerHealth <= 0:
@@ -288,7 +314,7 @@ def main():
 
 			# draw the player onto the surface
 			screen.blit(player_image,(player))
-
+			
 			# draw the asteroids
 			for b in asteroids:
 				screen.blit(b['surface'], b['rect'])
@@ -298,7 +324,11 @@ def main():
 				screen.blit(b['surface'], b['rect'])	
 			for b in bossfighters:
 				screen.blit(b['surface'], b['rect'])	
+			for b in explosions:
+				screen.blit(b['surface'], b['rect'], pygame.Rect((b['frame']*EXPLOSIONSIZE)/5,0,EXPLOSIONSIZE/5,EXPLOSIONSIZE/5))
 
+
+			# draw the stats
 			fontRenderer.draw_stat("Score: ", score, (10,10), screen)
 			fontRenderer.draw_stat("Health: ", playerHealth, (10, 40), screen)
 
@@ -329,6 +359,7 @@ def main():
 						for b in bossfighters:
 							bossfighters.remove(b)
 						bossfighters = []
+						bossfighterCounter = 0
 						playerHealth = 100
 						score = 0
 						player = pygame.Rect(300, 700, 32, 32)
