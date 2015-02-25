@@ -4,6 +4,9 @@ from pygame.locals import *
 import fontRenderer
 from fontRenderer import *
 
+import asteroidFactory
+from asteroidFactory import *
+
 def main():
 	# set up pygame
 	pygame.init()
@@ -11,7 +14,6 @@ def main():
 
 	player_image = pygame.image.load("M:/groupPy/img/player.png")
 	background = pygame.image.load("M:/groupPy/img/background.png")
-	ASTEROID_image = pygame.image.load("M:/groupPy/img/Rock.png")
 	FIGHTER_image = pygame.image.load("M:/groupPy/img/enemy_1.png")
 	BULLET_image = pygame.image.load("M:/groupPy/img/bullet.png")
 
@@ -62,14 +64,6 @@ def main():
 	BULLETSPEEDX = 5
 	bullets = []
 
-	# asteroid variables
-	asteroidCounter = 0
-	NEWASTEROID = 20
-	ASTEROIDSIZE = 50
-	ASTEROIDMAXSPEED = 5
-	ASTEROIDMINSPEED = 3
-	asteroids = []
-
 	# fighter variables
 	fighterCounter = 0
 	NEWFIGHTER = 20
@@ -79,9 +73,11 @@ def main():
 
 	fontRenderer = FontRenderer()
 
+	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png")
+
 	while gameRunning == True:
 		while gameOver == False:
-			# check for events
+			# PROCCESS EVENTS
 			for event in pygame.event.get():
 				if event.type == QUIT:
 					pygame.quit()
@@ -120,18 +116,10 @@ def main():
 						moveDown = False
 					if event.key == K_SPACE:
 						shooting = False
-						
-			# draw the black background onto the surface
-			screen.blit(background, backgroundRect)	
-			# add new enemies
-			asteroidCounter += 1
-			if asteroidCounter >= NEWASTEROID:
 
-				asteroids.append({'rect': pygame.Rect(random.randint(0, WINDOWWIDTH-ASTEROIDSIZE), 0 - ASTEROIDSIZE, ASTEROIDSIZE, ASTEROIDSIZE),
-							'speed': random.randint(ASTEROIDMINSPEED, ASTEROIDMAXSPEED),
-							'surface':pygame.transform.scale(ASTEROID_image, (ASTEROIDSIZE, ASTEROIDSIZE))
-							})
-				asteroidCounter = 0
+			# UPDATE EVERYTHING
+
+			asteroids.spawn(WINDOWWIDTH)
 				
 			fighterCounter += 1
 			if fighterCounter >= NEWFIGHTER:
@@ -177,12 +165,9 @@ def main():
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 									})
 					bulletCounter = 0
-			# Delete baddies that have fallen past the bottom.
-			for b in asteroids[:]:
 
-				if b['rect'].top > WINDOWHEIGHT:
-					asteroids.remove(b)
-					score += 10
+			# Delete things that are outside the screen
+			asteroids.remove(score, WINDOWHEIGHT)
 
 			for b in fighters[:]:
 				if b['rect'].top > WINDOWHEIGHT:
@@ -192,10 +177,6 @@ def main():
 			for b in bullets[:]:
 				if b['rect'].bottom < 0:
 					bullets.remove(b)
-
-
-			# draw the black background onto the surface
-			screen.blit(background, backgroundRect)		
 			
 			# move the player
 			if moveDown and player.bottom < WINDOWHEIGHT:
@@ -212,31 +193,26 @@ def main():
 				player_x += MOVESPEED
 
 			# move the asteroids
-			for b in asteroids:
-				b['rect'].move_ip(0, b['speed'])
+			asteroids.move()
+
 			for b in fighters:
 				b['rect'].move_ip(0, b['speed'])
 			for b in bullets:
 				b['rect'].move_ip(b['speed'])
-			# check for collisions
 
+			# check for collisions
 			for i in bullets:
 				for b in fighters:
 					if (i['rect']).colliderect(b['rect']):
 						bullets.remove(i)
 						fighters.remove(b)
 						score += 100
-						
-			for b in asteroids:
-				for i in bullets:
-					if (i['rect']).colliderect(b['rect']):
-						bullets.remove(i)
-						
-			for b in asteroids:
-				if player.colliderect(b['rect']):
-					asteroids.remove(b)
-					playerHealth -= 20
-					print (playerHealth)
+			
+			# TODO make this the other way round,
+			# bullets should be removed if they are touching asteroids
+			asteroids.remove_if_touching(bullets)
+			
+			playerHealth = asteroids.collide_and_hurt(player, playerHealth)
 				
 			for b in fighters:
 				if player.colliderect(b['rect']):
@@ -248,23 +224,22 @@ def main():
 			if playerHealth <= 0:
 				gameOver = True
 
-			# draw the player onto the surface
+
+			# DRAW PHASE
+			screen.blit(background, backgroundRect)
+
 			screen.blit(player_image,(player))
 
-			# draw the asteroids
-			for b in asteroids:
-				screen.blit(b['surface'], b['rect'])
+			asteroids.draw(screen)
+
 			for b in fighters:
 				screen.blit(b['surface'], b['rect'])	
 			for b in bullets:
 				screen.blit(b['surface'], b['rect'])	
 
-
-
 			# draw the stats
 			fontRenderer.draw_stat("Score: ", score, (10,10), screen)
 			fontRenderer.draw_stat("Health: ", playerHealth, (10, 40), screen)
-
 
 			# draw the window onto the screen
 			pygame.display.update()
@@ -281,9 +256,8 @@ def main():
 						pygame.quit()
 						sys.exit()
 					if event.key == ord('r'):
-						for b in asteroids:
-							asteroids.remove(b)
-						asteroids = []
+						asteroids.remove_all()
+
 						for b in fighters:
 							fighters.remove(b)
 						fighters = []
