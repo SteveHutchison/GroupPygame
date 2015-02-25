@@ -140,6 +140,16 @@ def main():
 			screen.blit(text, textpos)
 			screen.blit(scoreDisplay, Scorepos)
 			
+			#draw health
+			#draw text on screen
+			#healthfont = pygame.font.Font(None, 36)
+			healthtext = font.render("Health: ", 1, (255, 0, 0))
+			healthDisplay = font.render(str(playerHealth), 1, (255, 0, 0))
+			healthpos = (100, 40)
+			healthtextpos = (10, 40)
+			screen.blit(healthtext, healthtextpos)
+			screen.blit(healthDisplay, healthpos)
+			
 			# draw the enemies
 			for b in enemies:
 				screen.blit(b['surface'], b['rect'])
@@ -162,6 +172,7 @@ def main():
 							enemies.remove(b)
 						enemies = []
 						playerHealth = 100
+						score = 0
 						player = pygame.Rect(300, 700, 32, 32)
 						moveLeft = False
 						moveRight = False
