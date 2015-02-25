@@ -9,13 +9,16 @@ def main():
 	pygame.init()
 	mainClock = pygame.time.Clock()
 
-	player_image = pygame.image.load("M:/groupPy/img/player.png")
-	background = pygame.image.load("M:/groupPy/img/background.png")
-	ASTEROID_image = pygame.image.load("M:/groupPy/img/Rock.png")
-	FIGHTER_image = pygame.image.load("M:/groupPy/img/enemy_1.png")
-	BULLET_image = pygame.image.load("M:/groupPy/img/bullet.png")
-	EXPLOSION_image = pygame.image.load("M:/groupPy/img/explosion_tiles.bmp")
+	player_image = pygame.image.load("img/player.png")
+	background = pygame.image.load("img/background.png")
+	ASTEROID_image = pygame.image.load("img/Rock.png")
+	FIGHTER_image = pygame.image.load("img/enemy_1.png")
+	BULLET_image = pygame.image.load("img/bullet.png")
+	EXPLOSION_image = pygame.image.load("img/explosion_tiles.bmp")
 
+	#set up music
+	pygame.mixer.music.load('audio/backgroundmusic.mp3')
+	
 	backgroundRect = background.get_rect()
 
 	# set up the window
@@ -87,6 +90,8 @@ def main():
 	fontRenderer = FontRenderer()
 
 	while gameRunning == True:
+		# start music loop
+		pygame.mixer.music.play(5) 
 		while gameOver == False:
 			# check for events
 			for event in pygame.event.get():
@@ -251,12 +256,16 @@ def main():
 					asteroids.remove(b)
 					playerHealth -= 20
 					print (playerHealth)
+					effect = pygame.mixer.Sound('audio\explosion.ogg')
+					effect.play()
 				
 			for b in fighters:
 				if player.colliderect(b['rect']):
 					fighters.remove(b)
 					playerHealth -= 30
 					print (playerHealth)
+					effect = pygame.mixer.Sound('audio\explosion.ogg')
+					effect.play()
 
 			#check player health
 			if playerHealth <= 0:
