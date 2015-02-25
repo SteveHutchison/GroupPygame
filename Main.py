@@ -14,6 +14,7 @@ def main():
 	ASTEROID_image = pygame.image.load("M:/groupPy/img/Rock.png")
 	FIGHTER_image = pygame.image.load("M:/groupPy/img/enemy_1.png")
 	BULLET_image = pygame.image.load("M:/groupPy/img/bullet.png")
+	EXPLOSION_image = pygame.image.load("M:/groupPy/img/explosion_tiles.bmp")
 
 	backgroundRect = background.get_rect()
 
@@ -75,6 +76,12 @@ def main():
 	FIGHTERSIZE = 30
 	FIGHTERSPEED = 12
 	fighters = []
+	
+	# explosion variables
+	frames = 17
+	EXPLOSIONSIZE = 200
+	EXPLOSIONSCALE = 5
+	explosions = []
 
 	fontRenderer = FontRenderer()
 
@@ -178,11 +185,10 @@ def main():
 					bulletCounter = 0
 			# Delete baddies that have fallen past the bottom.
 			for b in asteroids[:]:
-
 				if b['rect'].top > WINDOWHEIGHT:
 					asteroids.remove(b)
 					score += 10
-
+			
 			for b in fighters[:]:
 				if b['rect'].top > WINDOWHEIGHT:
 					fighters.remove(b)
@@ -191,6 +197,11 @@ def main():
 			for b in bullets[:]:
 				if b['rect'].bottom < 0:
 					bullets.remove(b)
+					
+			for e in explosions[:]:
+				e['frame'] = e['frame'] + 1
+				if e['frame'] >= 18:
+					explosions.remove(e)
 
 
 			# draw the black background onto the surface
@@ -222,9 +233,12 @@ def main():
 			for i in bullets:
 				for b in fighters:
 					if (i['rect']).colliderect(b['rect']):
+						explosions.append({'frame': 0,
+						'rect': pygame.Rect(b['rect'].left, b['rect'].top, EXPLOSIONSIZE, EXPLOSIONSIZE),
+						'surface':pygame.transform.scale(EXPLOSION_image, (EXPLOSIONSIZE*17/5, EXPLOSIONSIZE/5))}) 
+						score += 100
 						bullets.remove(i)
 						fighters.remove(b)
-						score += 100
 						
 			for b in asteroids:
 				for i in bullets:
@@ -249,7 +263,7 @@ def main():
 
 			# draw the player onto the surface
 			screen.blit(player_image,(player))
-
+			
 			# draw the asteroids
 			for b in asteroids:
 				screen.blit(b['surface'], b['rect'])
@@ -257,6 +271,8 @@ def main():
 				screen.blit(b['surface'], b['rect'])	
 			for b in bullets:
 				screen.blit(b['surface'], b['rect'])	
+			for b in explosions:
+				screen.blit(b['surface'], b['rect'], pygame.Rect((b['frame']*EXPLOSIONSIZE)/5,0,EXPLOSIONSIZE/5,EXPLOSIONSIZE/5))
 
 
 
