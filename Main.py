@@ -158,24 +158,18 @@ def main():
 			asteroids.spawn(WINDOWWIDTH)
 
 			fighters.spawn(WINDOWWIDTH)
-			
+			#add to the boss fighter counter untill time for new boss to spawn
 			bossfighterCounter += 1
 			if bossfighterCounter == NEWBOSS:
-							
+				#spawn the new boss
 				bossfighters.append({'rect': pygame.Rect(316, 0 - BOSSSIZE, BOSSSIZE, BOSSSIZE),
 							'speed': (BOSSSPEEDX, BOSSSPEEDY),
 							'surface':pygame.transform.scale(BOSS_image, (BOSSSIZE, BOSSSIZE))
 							})
 				boss_x = 316
 				boss_y = 800 - (0 - BOSSSIZE)
-			#	boss_shoot = True
-				
-			#if boss_shoot == True:
-			#	bullets.append({'rect': pygame.Rect(boss_x, boss_y, BULLETSIZE, BULLETSIZE),
-			#					'speed':  (0, -BULLETSPEEDY),
-			#					'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
-			#					})
 
+			#player shooting mechanic / fires extra bullets with each level of power
 			if shooting == True:
 				bulletCounter += 1
 				if bulletCounter >= NEWBULLET:
@@ -245,7 +239,7 @@ def main():
 
 			# move the asteroids
 			asteroids.move()
-
+			#move fighters
 			fighters.move()
 
 			# for b in fighters:
@@ -281,11 +275,14 @@ def main():
 			playerHealth = asteroids.collide_player(player, playerHealth)
 
 			playerHealth = fighters.collide_player(player, playerHealth)
-
+			#updated to earn score whilst collecting pickups with full health
 			for b in healthpickups:
 				if player.colliderect(b['rect']):
-					healthpickups.remove(b)
-					playerHealth += 20
+					healthpickups.remove(b)					
+					if playerHealth < 100:
+						playerHealth += 20
+					if playerHealth == 100:
+						score += 20
 					if playerHealth > 100:
 						playerHealth = 100
 					
