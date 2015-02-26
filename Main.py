@@ -19,6 +19,7 @@ def main():
 	BOSS_image = pygame.image.load("M:/groupPy/img/Spaceship.png")
 	BULLET_image = pygame.image.load("img/bullet.png")
 	EXPLOSION_image = pygame.image.load("img/explosion_tiles.bmp")
+	HEALTH_image = pygame.image.load("img/HealthPowerUp.png")
 
 	#set up music
 	pygame.mixer.music.load('audio/backgroundmusic.mp3')
@@ -94,6 +95,12 @@ def main():
 	EXPLOSIONSIZE = 200
 	EXPLOSIONSCALE = 5
 	explosions = []
+	
+	# health pick up variables
+	HEALTHSIZE = 32
+	HEALTHSPEED = 6
+	healthpickups = []
+	
 
 	fontRenderer = FontRenderer()
 
@@ -253,6 +260,9 @@ def main():
 				
 			for b in bullets:
 				b['rect'].move_ip(b['speed'])
+				
+			for b in healthpickups:
+				b['rect'].move_ip(0, b['speed'])
 
 			# check for collisions
 			for i in bullets:
@@ -264,6 +274,13 @@ def main():
 						score += 100
 						bullets.remove(i)
 						fighters.remove(b)
+						effect = pygame.mixer.Sound('audio\explosion.ogg')
+						effect.play()
+						z = random.randint(1, 10)
+						if z > 8:
+							healthpickups.append({'rect': pygame.Rect(b['rect'].left, b['rect'].top, HEALTHSIZE, HEALTHSIZE),
+								'speed': HEALTHSPEED,
+								'surface':pygame.transform.scale(HEALTH_image, (HEALTHSIZE, HEALTHSIZE))})
 
 			# TODO make this the other way round,
 			# bullets should be removed if they are touching asteroids
@@ -279,6 +296,13 @@ def main():
 					effect = pygame.mixer.Sound('audio\explosion.ogg')
 					effect.play()
 
+			for b in healthpickups:
+				if player.colliderect(b['rect']):
+					healthpickups.remove(b)
+					playerHealth += 20
+					if playerHealth > 100:
+						playerHealth = 100
+					
 			#check player health
 			if playerHealth <= 0:
 				gameOver = True
@@ -302,7 +326,9 @@ def main():
 			for b in bullets:
 				screen.blit(b['surface'], b['rect'])	
 			for b in bossfighters:
-				screen.blit(b['surface'], b['rect'])	
+				screen.blit(b['surface'], b['rect'])
+			for b in healthpickups:
+				screen.blit(b['surface'], b['rect'])
 			for e in explosions:
 				screen.blit(e['surface'], e['rect'], pygame.Rect((e['frame']*EXPLOSIONSIZE)/5,0,EXPLOSIONSIZE/5,EXPLOSIONSIZE/5))
 
@@ -336,6 +362,9 @@ def main():
 						for b in bossfighters:
 							bossfighters.remove(b)
 						bossfighters = []
+						for b in healthpickups:
+							healthpickups.remove(b)
+						healthpickups = []
 						bossfighterCounter = 0
 						playerHealth = 100
 						score = 0
