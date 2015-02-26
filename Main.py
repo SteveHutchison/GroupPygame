@@ -20,6 +20,7 @@ def main():
 	ASTEROID_image = pygame.image.load("img/Rock.png")
 	BOSS_image = pygame.image.load("M:/groupPy/img/Spaceship.png")
 	BULLET_image = pygame.image.load("img/bullet.png")
+	BOSSBULLET_image = pygame.image.load("img/enemy_bullet.png")
 	EXPLOSION_image = pygame.image.load("img/explosion_tiles.bmp")
 	HEALTH_image = pygame.image.load("img/HealthPowerUp.png")
 
@@ -76,6 +77,18 @@ def main():
 	BULLETSPEEDX = 5
 	bullets = []
 	
+	# enemy bullet variables
+	bossbulletCounter = 0
+	bossbulletCounterTotal = 0
+	bossbulletwaveCounter = 0
+	NEWBOSSBULLET = 4
+	NEWBOSSBULLETWAVE = 12
+	NEWBOSSBULLETWAVESTOP = 20
+	BOSSBULLETSIZE = 8
+	BOSSBULLETSPEEDY = 12
+	BOSSBULLETSPEEDX = 4
+	boss_bullets = []
+	
 	# boss fighter variables
 	bossfighterCounter = 0
 	boss_x = 0
@@ -84,6 +97,7 @@ def main():
 	BOSSSIZE = 96
 	BOSSSPEEDY = 4
 	BOSSSPEEDX = 4
+	BOSS_SHOOTING = False
 	bossfighters = []
 
 	# explosion variables
@@ -159,7 +173,7 @@ def main():
 							'surface':pygame.transform.scale(BOSS_image, (BOSSSIZE, BOSSSIZE))
 							})
 				boss_x = 316
-				boss_y = 800 - (0 - BOSSSIZE)
+				boss_y = (0 - BOSSSIZE)
 
 			if shooting == True:
 				bulletCounter += 1
@@ -234,18 +248,46 @@ def main():
 			# 	b['rect'].move_ip(0, b['speed'])
 
 			for b in bossfighters:
-				if boss_y > 650:
+				if boss_y < 150:
 					b['rect'].move_ip(0, BOSSSPEEDY)
-					boss_y -= BOSSSPEEDY
+					boss_y += BOSSSPEEDY
 					#print (boss_y)
+				if boss_y >= 150:
+					BOSS_SHOOTING = True
 				if boss_x < player_x-48:
 					b['rect'].move_ip(BOSSSPEEDX, 0)
 					boss_x += BOSSSPEEDX
 				if boss_x > player_x-48:
 					b['rect'].move_ip(-BOSSSPEEDX, 0)
 					boss_x -= BOSSSPEEDX
+				if BOSS_SHOOTING == True:
+					bossbulletwaveCounter += 1
+					if bossbulletwaveCounter >= NEWBOSSBULLETWAVE:
+						bossbulletCounter += 1
+						bossbulletCounterTotal += 1
+						if bossbulletCounter >= NEWBOSSBULLET:
+							boss_bullets.append({'rect': pygame.Rect(boss_x + 48, boss_y, BULLETSIZE, BULLETSIZE),
+										'speed':  (0, BOSSBULLETSPEEDY),
+										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
+										})
+							boss_bullets.append({'rect': pygame.Rect(boss_x + 16, boss_y, BULLETSIZE, BULLETSIZE),
+										'speed':  (-BOSSBULLETSPEEDX, BOSSBULLETSPEEDY),
+										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
+										})
+							boss_bullets.append({'rect': pygame.Rect(boss_x + 80, boss_y, BULLETSIZE, BULLETSIZE),
+										'speed':  (BOSSBULLETSPEEDX, BOSSBULLETSPEEDY),
+										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
+										})
+							bossbulletCounter = 0
+							if bossbulletCounterTotal >= NEWBOSSBULLETWAVESTOP:
+								bossbulletCounterTotal = 0
+								bossbulletwaveCounter = 0
+						
 				
 			for b in bullets:
+				b['rect'].move_ip(b['speed'])
+				
+			for b in boss_bullets:
 				b['rect'].move_ip(b['speed'])
 				
 			for b in healthpickups:
@@ -263,7 +305,12 @@ def main():
 			playerHealth = asteroids.collide_player(player, playerHealth)
 
 			playerHealth = fighters.collide_player(player, playerHealth)
-
+			
+			for b in boss_bullets:
+				if player.colliderect(b['rect']):
+					boss_bullets.remove(b)
+					playerHealth -= 5
+				
 			for b in healthpickups:
 				if player.colliderect(b['rect']):
 					healthpickups.remove(b)
@@ -296,7 +343,9 @@ def main():
 			# 	screen.blit(f['surface'], f['rect'])
 
 			for b in bullets:
-				screen.blit(b['surface'], b['rect'])	
+				screen.blit(b['surface'], b['rect'])
+			for b in boss_bullets:
+				screen.blit(b['surface'], b['rect'])
 			for b in bossfighters:
 				screen.blit(b['surface'], b['rect'])
 			for b in healthpickups:
