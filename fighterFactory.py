@@ -47,6 +47,7 @@ class FighterFactory:
 						self.fighters.remove(f)
 						bullets.remove(i)
 						fightersDestoryed += 1
+						self.deathSound.play()
 		# add up the amount of fighters destroyed and modify the score
 		return (self.reward * fightersDestoryed)
 

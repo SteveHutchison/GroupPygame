@@ -76,4 +76,4 @@ class AsteroidFactory:
 	def remove_all(self):
 		for a in self.asteroids:
 			self.asteroids.remove(a)
-		asteroids = []
+		self.asteroids = []

@@ -91,7 +91,7 @@ def main():
 
 	fontRenderer = FontRenderer()
 	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png")
-	fighters     = FighterFactory("img/enemy_1.png", "img/explosion_tiles.bmp", "audio\explosion.ogg")
+	fighters     = FighterFactory("img/enemy_1.png", "img/explosion_tiles.bmp", "audio\explosion_1.wav")
 
 	while gameRunning == True:
 		# start music loop
