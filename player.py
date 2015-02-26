@@ -1,6 +1,7 @@
 import pygame, random
 
 class Player:
+	image = pygame.image
 	rect = pygame.Rect(300, 700, 32, 32)
 	x = rect.x + (rect.width/2)
 	y = rect.y + (rect.height/2)
@@ -11,8 +12,8 @@ class Player:
 	maxPower = 4
 	power = 1
 
-	def __init__(self):
-		pass
+	def __init__(self, image_path):
+		self.image = pygame.image.load(image_path)
 
 	def reset(self, x, y):
 		self.rect = pygame.Rect(x, y, 32, 32)
@@ -22,6 +23,9 @@ class Player:
 		self.y = 700
 		self.shooting = False
 		self.power = 1
+
+	def draw(self, target):
+		target.blit(self.image,self.rect)
 
 	def collide_health(self, health, amount):
 		for h in health:
