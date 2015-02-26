@@ -18,7 +18,7 @@ def main():
 	player_image = pygame.image.load("img/player.png")
 	background = pygame.image.load("img/background.png")
 	ASTEROID_image = pygame.image.load("img/Rock.png")
-	BOSS_image = pygame.image.load("M:/groupPy/img/Spaceship.png")
+	BOSS_image = pygame.image.load("img/Spaceship.png")
 	BULLET_image = pygame.image.load("img/bullet.png")
 	EXPLOSION_image = pygame.image.load("img/explosion_tiles.bmp")
 	HEALTH_image = pygame.image.load("img/HealthPowerUp.png")
@@ -48,7 +48,8 @@ def main():
 	MOVESPEED = 8
 
 	gameOver = False
-	gameRunning = True
+	gameRunning = False
+	splashScreen = True
 
 	# set up the colors
 	BLACK = (0, 0, 0)
@@ -102,6 +103,56 @@ def main():
 	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png")
 	fighters     = FighterFactory("img/enemy_1.png", "img/explosion_tiles.bmp", "audio\explosion_1.wav")
 
+	# Splash screen specific variables
+	flyingRight = True # else flying left
+	splashPlayer = pygame.Rect(300, 700, 32, 32)
+	splashPlayerX = 0
+	splashPlayerY = 600
+	playerRotated = pygame.transform.rotate(player_image, -90)
+	# Splash Screen
+	while splashScreen == True:
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				pygame.quit()
+				sys.exit()
+			if event.type == KEYDOWN:
+				if event.key == K_ESCAPE:
+					pygame.quit()
+					sys.exit()
+				if event.key == ord(' '):
+					splashScreen = False
+					gameRunning = True
+		# Draw functions here
+		
+		# Draw the scrolling backgound
+		backgroundY = backgroundY + 1
+		if backgroundY == 800:
+			backgroundY = 0
+		
+		screen.blit(background, (0,backgroundY))
+		screen.blit(background,(0, backgroundY-800))
+		
+		# Move and Draw player flying
+		if flyingRight == True:
+			splashPlayerX = splashPlayerX + 2
+		else:
+			splashPlayerX = splashPlayerX - 2;
+		if splashPlayerX > 600:
+			flyingRight = False
+			playerRotated = pygame.transform.rotate(player_image, 90)
+			splashPlayerY = random.randint(0, 800)
+		elif splashPlayerX < -32:
+			flyingRight = True
+			playerRotated = pygame.transform.rotate(player_image, -90)
+			splashPlayerY = random.randint(0, 800)
+		# Draw player
+		screen.blit(playerRotated,(splashPlayerX, splashPlayerY))
+		# Draw Title
+		fontRenderer.draw_title("Press Space to play!", (50, 300), screen)
+		
+		# draw the window onto the screen
+		pygame.display.update()
+		mainClock.tick(40)
 	while gameRunning == True:
 		# start music loop
 		pygame.mixer.music.play(5) 
