@@ -10,6 +10,9 @@ from asteroidFactory import *
 import fighterFactory
 from fighterFactory import *
 
+import player
+from player import *
+
 def main():
 	# set up pygame
 	pygame.init()
@@ -62,15 +65,7 @@ def main():
 	RANDOMCOLOUR = (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))
 	WHITE = (255, 255, 255)
 
-	# player variables
-	score = 0
-	playerHealth = 100
-	player = pygame.Rect(300, 700, 32, 32)
-	player_x = 316
-	player_y = 700
-	shooting = False
-	max_power = 4
-	power = 1
+	player = Player()
 	
 	# player bullet variables
 	bulletCounter = 0
@@ -130,11 +125,11 @@ def main():
 						#moveUp = False
 						moveDown = True
 					if event.key == K_SPACE:
-						shooting = True
-					if event.key == ord('z') and power < max_power:
-						power += 1
-					if event.key == ord('x') and power > 1:
-						power -= 1
+						player.shooting = True
+					if event.key == ord('z') and player.power < player.maxPower:
+						player.power += 1
+					if event.key == ord('x') and player.power > 1:
+						player.power -= 1
 				if event.type == KEYUP:
 					if event.key == K_ESCAPE:
 						pygame.quit()
@@ -148,7 +143,7 @@ def main():
 					if event.key == K_DOWN or event.key == ord('s'):
 						moveDown = False
 					if event.key == K_SPACE:
-						shooting = False
+						player.shooting = False
 						bulletCounter = NEWBULLET
 
 			# UPDATE EVERYTHING
@@ -166,47 +161,47 @@ def main():
 				boss_x = 316
 				boss_y = 800 - (0 - BOSSSIZE)
 
-			if shooting == True:
+			if player.shooting == True:
 				bulletCounter += 1
 				if bulletCounter >= NEWBULLET:
 					bulletSound_1.play()
-					bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
+					bullets.append({'rect': pygame.Rect(player.x, player.y, BULLETSIZE, BULLETSIZE),
 								'speed':  (0, BULLETSPEEDY),
 								'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 								})
-					if power >= 2:
+					if player.power >= 2:
 						bulletSound_2.play()
-						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
+						bullets.append({'rect': pygame.Rect(player.x, player.y, BULLETSIZE, BULLETSIZE),
 									'speed': (BULLETSPEEDX, 0.95*BULLETSPEEDY), 
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 									})
-						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
+						bullets.append({'rect': pygame.Rect(player.x, player.y, BULLETSIZE, BULLETSIZE),
 									'speed':  (-BULLETSPEEDX, 0.95*BULLETSPEEDY),
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 									})
-					if power >= 3:	
+					if player.power >= 3:	
 						bulletSound_3.play()		
-						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
+						bullets.append({'rect': pygame.Rect(player.x, player.y, BULLETSIZE, BULLETSIZE),
 									'speed': (2*BULLETSPEEDX, 0.9*BULLETSPEEDY), 
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 									})
-						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
+						bullets.append({'rect': pygame.Rect(player.x, player.y, BULLETSIZE, BULLETSIZE),
 									'speed':  (-2*BULLETSPEEDX, 0.9*BULLETSPEEDY),
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 									})
-					if power >= 4:	
-						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
+					if player.power >= 4:	
+						bullets.append({'rect': pygame.Rect(player.x, player.y, BULLETSIZE, BULLETSIZE),
 									'speed': (3*BULLETSPEEDX, 0.8*BULLETSPEEDY), 
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 									})
-						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
+						bullets.append({'rect': pygame.Rect(player.x, player.y, BULLETSIZE, BULLETSIZE),
 									'speed':  (-3*BULLETSPEEDX, 0.8*BULLETSPEEDY),
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 									})
 					bulletCounter = 0
 
 			# Delete things that are outside the screen
-			score += asteroids.remove(WINDOWHEIGHT)
+			player.score += asteroids.remove(WINDOWHEIGHT)
 
 			fighters.remove(WINDOWHEIGHT)
 					
@@ -220,18 +215,18 @@ def main():
 					explosions.remove(e)
 
 			# move the player
-			if moveDown and player.bottom < WINDOWHEIGHT:
-				player.top += MOVESPEED
-				player_y += MOVESPEED
-			if moveUp and player.top > 0:
-				player.top -= MOVESPEED
-				player_y -= MOVESPEED
-			if moveLeft and player.left > 0:
-				player.left -= MOVESPEED
-				player_x -= MOVESPEED
-			if moveRight and player.right < WINDOWWIDTH:
-				player.right += MOVESPEED
-				player_x += MOVESPEED
+			if moveDown and player.rect.bottom < WINDOWHEIGHT:
+				player.rect.top += MOVESPEED
+				player.y += MOVESPEED
+			if moveUp and player.rect.top > 0:
+				player.rect.top -= MOVESPEED
+				player.y -= MOVESPEED
+			if moveLeft and player.rect.left > 0:
+				player.rect.left -= MOVESPEED
+				player.x -= MOVESPEED
+			if moveRight and player.rect.right < WINDOWWIDTH:
+				player.rect.right += MOVESPEED
+				player.x += MOVESPEED
 
 			# move the asteroids
 			asteroids.move()
@@ -246,10 +241,10 @@ def main():
 					b['rect'].move_ip(0, BOSSSPEEDY)
 					boss_y -= BOSSSPEEDY
 					#print (boss_y)
-				if boss_x < player_x-48:
+				if boss_x < player.x-48:
 					b['rect'].move_ip(BOSSSPEEDX, 0)
 					boss_x += BOSSSPEEDX
-				if boss_x > player_x-48:
+				if boss_x > player.x-48:
 					b['rect'].move_ip(-BOSSSPEEDX, 0)
 					boss_x -= BOSSSPEEDX
 				
@@ -261,26 +256,26 @@ def main():
 
 
 
-			score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image)
+			player.score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image)
 
 
 			# TODO make this the other way round,
 			# bullets should be removed if they are touching asteroids
 			asteroids.collide_bullets(bullets)
 			
-			playerHealth = asteroids.collide_player(player, playerHealth)
+			player.health = asteroids.collide_player(player.rect, player.health)
 
-			playerHealth = fighters.collide_player(player, playerHealth)
+			player.health = fighters.collide_player(player.rect, player.health)
 
 			for b in healthpickups:
-				if player.colliderect(b['rect']):
+				if player.rect.colliderect(b['rect']):
 					healthpickups.remove(b)
-					playerHealth += 20
-					if playerHealth > 100:
-						playerHealth = 100
+					player.health += 20
+					if player.health > 100:
+						player.health = 100
 					
 			#check player health
-			if playerHealth <= 0:
+			if player.health <= 0:
 				gameOver = True
 
 
@@ -294,7 +289,7 @@ def main():
 			screen.blit(background, (0,backgroundY))
 			screen.blit(background,(0, backgroundY-800))
 
-			screen.blit(player_image,(player))
+			screen.blit(player_image,(player.rect))
 
 			asteroids.draw(screen)
 
@@ -313,8 +308,8 @@ def main():
 				screen.blit(e['surface'], e['rect'], pygame.Rect((e['frame']*EXPLOSIONSIZE)/5,0,EXPLOSIONSIZE/5,EXPLOSIONSIZE/5))
 
 			# draw the stats
-			fontRenderer.draw_stat("Score: ", score, (10,10), screen)
-			fontRenderer.draw_stat("Health: ", playerHealth, (10, 40), screen)
+			fontRenderer.draw_stat("Score: ", player.score, (10,10), screen)
+			fontRenderer.draw_stat("Health: ", player.health, (10, 40), screen)
 
 			# draw the window onto the screen
 			pygame.display.update()
@@ -343,12 +338,12 @@ def main():
 							healthpickups.remove(b)
 						healthpickups = []
 						bossfighterCounter = 0
-						playerHealth = 100
-						score = 0
-						player = pygame.Rect(300, 700, 32, 32)
-						player_x = 316
-						player_y = 700
-						shooting = False
+						player.health = 100
+						player.score = 0
+						player.rect = pygame.Rect(300, 700, 32, 32)
+						player.x = 316
+						player.y = 700
+						player.shooting = False
 						gameOver = False
 						moveLeft = False
 						moveRight = False
@@ -357,7 +352,7 @@ def main():
 
 			fontRenderer.draw_title("Press R to retry", (100, 300), screen)
 
-			if playerHealth > 0:
+			if player.health > 0:
 					gameOver = False
 					
 			# draw the window onto the screen
