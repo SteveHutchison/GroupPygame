@@ -33,6 +33,7 @@ def main():
 	#set up music
 	pygame.mixer.music.load("audio/backgroundmusic.mp3")
 
+	#set background rect equal to the size of the background image
 	backgroundRect = background.get_rect()
 	backgroundArea = backgroundRect
 	backgroundY = 0;
@@ -105,6 +106,7 @@ def main():
 	BOSSSPEEDX = 4
 	BOSS_SHOOTING = False
 	bossfighters = []
+	boss_shoot = False
 
 	# explosion variables
 	EXPLOSIONFRAMES = 17
@@ -117,6 +119,7 @@ def main():
 	HEALTHSPEED = 6
 	healthpickups = []
 	
+
 
 	fontRenderer = FontRenderer()
 	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png")
@@ -171,10 +174,10 @@ def main():
 			asteroids.spawn(WINDOWWIDTH)
 
 			fighters.spawn(WINDOWWIDTH)
-			
+			#add to the boss fighter counter untill time for new boss to spawn
 			bossfighterCounter += 1
 			if bossfighterCounter == NEWBOSS:
-							
+				#spawn the new boss
 				bossfighters.append({'rect': pygame.Rect(316, 0 - BOSSSIZE, BOSSSIZE, BOSSSIZE),
 							'speed': (BOSSSPEEDX, BOSSSPEEDY),
 							'surface':pygame.transform.scale(BOSS_image, (BOSSSIZE, BOSSSIZE))
@@ -182,6 +185,7 @@ def main():
 				boss_x = 316
 				boss_y = (0 - BOSSSIZE)
 
+			#player shooting mechanic / fires extra bullets with each level of power
 			if shooting == True:
 				bulletCounter += 1
 				if bulletCounter >= NEWBULLET:
@@ -255,7 +259,7 @@ def main():
 
 			# move the asteroids
 			asteroids.move()
-
+			#move fighters
 			fighters.move()
 
 			# for b in fighters:
@@ -324,6 +328,9 @@ def main():
 			playerHealth = asteroids.collide_player(player, playerHealth)
 
 			playerHealth = fighters.collide_player(player, playerHealth)
+
+			#updated to earn score whilst collecting pickups with full health
+
 			
 			for i in bullets:
 				for f in bossfighters:
@@ -340,10 +347,14 @@ def main():
 					boss_bullets.remove(b)
 					playerHealth -= 5
 				
+
 			for b in healthpickups:
 				if player.colliderect(b['rect']):
-					healthpickups.remove(b)
-					playerHealth += 20
+					healthpickups.remove(b)					
+					if playerHealth < 100:
+						playerHealth += 20
+					if playerHealth == 100:
+						score += 20
 					if playerHealth > 100:
 						playerHealth = 100
 					
