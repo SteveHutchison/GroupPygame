@@ -21,8 +21,7 @@ def main():
 	player_image = pygame.image.load("img/player.png")
 	background = pygame.image.load("img/background.png")
 	ASTEROID_image = pygame.image.load("img/Rock.png")
-	BOSS_image = pygame.image.load("M:/groupPy/img/Spaceship.png")
-
+	BOSS_image = pygame.image.load("img/Spaceship.png")
 	BULLET_image = pygame.image.load("img/bullet.png")
 	BOSSBULLET_image = pygame.image.load("img/enemy_bullet.png")
 	EXPLOSION_image = pygame.image.load("img/explosion_tiles.bmp")
@@ -58,7 +57,8 @@ def main():
 	MOVESPEED = 8
 
 	gameOver = False
-	gameRunning = True
+	gameRunning = False
+	splashScreen = True
 
 	# set up the colors
 	BLACK = (0, 0, 0)
@@ -85,13 +85,14 @@ def main():
 	NEWBOSSBULLET = 4
 	NEWBOSSBULLETWAVE = 12
 	NEWBOSSBULLETWAVESTOP = 20
-	BOSSBULLETSIZE = 8
+	BOSSBULLETSIZE = 16
 	BOSSBULLETSPEEDY = 12
 	BOSSBULLETSPEEDX = 4
 	boss_bullets = []
 	
 	# boss fighter variables
 	bossfighterCounter = 0
+	boss_health = 1000
 	boss_x = 0
 	boss_y = 0
 	NEWBOSS = 200
@@ -119,6 +120,56 @@ def main():
 	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png")
 	fighters     = FighterFactory("img/enemy_1.png", "img/explosion_tiles.bmp", "audio\explosion_1.wav")
 
+	# Splash screen specific variables
+	flyingRight = True # else flying left
+	splashPlayer = pygame.Rect(300, 700, 32, 32)
+	splashPlayerX = 0
+	splashPlayerY = 600
+	playerRotated = pygame.transform.rotate(player_image, -90)
+	# Splash Screen
+	while splashScreen == True:
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				pygame.quit()
+				sys.exit()
+			if event.type == KEYDOWN:
+				if event.key == K_ESCAPE:
+					pygame.quit()
+					sys.exit()
+				if event.key == ord(' '):
+					splashScreen = False
+					gameRunning = True
+		# Draw functions here
+		
+		# Draw the scrolling backgound
+		backgroundY = backgroundY + 1
+		if backgroundY == 800:
+			backgroundY = 0
+		
+		screen.blit(background, (0,backgroundY))
+		screen.blit(background,(0, backgroundY-800))
+		
+		# Move and Draw player flying
+		if flyingRight == True:
+			splashPlayerX = splashPlayerX + 2
+		else:
+			splashPlayerX = splashPlayerX - 2;
+		if splashPlayerX > 600:
+			flyingRight = False
+			playerRotated = pygame.transform.rotate(player_image, 90)
+			splashPlayerY = random.randint(0, 800)
+		elif splashPlayerX < -32:
+			flyingRight = True
+			playerRotated = pygame.transform.rotate(player_image, -90)
+			splashPlayerY = random.randint(0, 800)
+		# Draw player
+		screen.blit(playerRotated,(splashPlayerX, splashPlayerY))
+		# Draw Title
+		fontRenderer.draw_title("Press Space to play!", (50, 300), screen)
+		
+		# draw the window onto the screen
+		pygame.display.update()
+		mainClock.tick(40)
 	while gameRunning == True:
 		# start music loop
 		pygame.mixer.music.play(5) 
@@ -223,6 +274,10 @@ def main():
 			player.score += asteroids.remove(WINDOWHEIGHT)
 
 			fighters.remove(WINDOWHEIGHT)
+			
+			for a in boss_bullets:
+				if a['rect'].top > WINDOWHEIGHT:
+					boss_bullets.remove(a)
 					
 			for b in bullets[:]:
 				if b['rect'].bottom < 0:
@@ -279,11 +334,19 @@ def main():
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 16, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (-BOSSBULLETSPEEDX, BOSSBULLETSPEEDY),
+										'speed':  (-BOSSBULLETSPEEDX, 0.95*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 80, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (BOSSBULLETSPEEDX, BOSSBULLETSPEEDY),
+										'speed':  (BOSSBULLETSPEEDX, 0.95*BOSSBULLETSPEEDY),
+										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
+										})
+							boss_bullets.append({'rect': pygame.Rect(boss_x + 16, boss_y, BULLETSIZE, BULLETSIZE),
+										'speed':  (-2*BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
+										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
+										})
+							boss_bullets.append({'rect': pygame.Rect(boss_x + 80, boss_y, BULLETSIZE, BULLETSIZE),
+										'speed':  (2*BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							bossbulletCounter = 0
@@ -301,10 +364,7 @@ def main():
 			for b in healthpickups:
 				b['rect'].move_ip(0, b['speed'])
 
-
-
 			player.score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image)
-
 
 			# TODO make this the other way round,
 			# bullets should be removed if they are touching asteroids
@@ -316,6 +376,16 @@ def main():
 
 			#updated to earn score whilst collecting pickups with full health
 
+			
+			for i in bullets:
+				for f in bossfighters:
+					if (i['rect']).colliderect(f['rect']):
+						bullets.remove(i)
+						boss_health -= 5
+			
+			if boss_health <= 0:
+				for b in bossfighters:
+					bossfighters.remove(b)
 			
 			for b in boss_bullets:
 				if player.rect.colliderect(b['rect']):
@@ -371,6 +441,7 @@ def main():
 			# draw the stats
 			fontRenderer.draw_stat("Score: ", player.score, (10,10), screen)
 			fontRenderer.draw_stat("Health: ", player.health, (10, 40), screen)
+			fontRenderer.draw_stat("Boss Health: ", boss_health, (10, 70), screen)
 
 			# draw the window onto the screen
 			pygame.display.update()
@@ -392,19 +463,25 @@ def main():
 						for b in bullets:
 							bullets.remove(b)
 						bullets = []
+						for b in boss_bullets:
+							boss_bullets.remove(b)
+						boss_bullets = []
 						for b in bossfighters:
 							bossfighters.remove(b)
 						bossfighters = []
 						for b in healthpickups:
 							healthpickups.remove(b)
 						healthpickups = []
-						bossfighterCounter = 0
+						
 						player.health = 100
 						player.score = 0
 						player.rect = pygame.Rect(300, 700, 32, 32)
 						player.x = 316
 						player.y = 700
 						player.shooting = False
+
+						bossfighterCounter = 0
+						boss_health = 1000
 						gameOver = False
 						moveLeft = False
 						moveRight = False
