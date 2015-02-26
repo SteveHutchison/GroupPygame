@@ -2,7 +2,6 @@
 import pygame, random
 
 class AsteroidFactory:
-
 	def __init__(self, image_path):
 		## variables declared here are unique to each instance
 
