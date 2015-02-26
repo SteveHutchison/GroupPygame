@@ -22,10 +22,10 @@ def main():
 
 	BULLET_image = pygame.image.load("img/bullet.png")
 	BOSSBULLET_image = pygame.image.load("img/enemy_bullet.png")
+	BOSSBULLET2_image = pygame.image.load("img/enemy_bullet2.png")
 	EXPLOSION_image = pygame.image.load("img/explosion_tiles.bmp")
 	HEALTH_image = pygame.image.load("img/HealthPowerUp.png")
 
-	BULLET_image = pygame.image.load("img/bullet.png")
 	bulletSound_1  = pygame.mixer.Sound("M:/groupPy/audio/shoot_1.wav")
 	bulletSound_2  = pygame.mixer.Sound("M:/groupPy/audio/shoot_2.wav")
 	bulletSound_3  = pygame.mixer.Sound("M:/groupPy/audio/shoot_3.wav")
@@ -288,20 +288,20 @@ def main():
 										'speed':  (0, BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
+							boss_bullets.append({'rect': pygame.Rect(boss_x + 32, boss_y, BULLETSIZE, BULLETSIZE),
+										'speed':  (-0.3*BOSSBULLETSPEEDX, 0.5*0.95*BOSSBULLETSPEEDY),
+										'surface':pygame.transform.scale(BOSSBULLET2_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
+										})
+							boss_bullets.append({'rect': pygame.Rect(boss_x + 64, boss_y, BULLETSIZE, BULLETSIZE),
+										'speed':  (0.3*BOSSBULLETSPEEDX, 0.5*0.95*BOSSBULLETSPEEDY),
+										'surface':pygame.transform.scale(BOSSBULLET2_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
+										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 16, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (-BOSSBULLETSPEEDX, 0.95*BOSSBULLETSPEEDY),
+										'speed':  (-BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 80, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (BOSSBULLETSPEEDX, 0.95*BOSSBULLETSPEEDY),
-										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
-										})
-							boss_bullets.append({'rect': pygame.Rect(boss_x + 16, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (-2*BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
-										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
-										})
-							boss_bullets.append({'rect': pygame.Rect(boss_x + 80, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (2*BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
+										'speed':  (BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							bossbulletCounter = 0
