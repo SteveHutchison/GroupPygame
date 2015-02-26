@@ -19,6 +19,7 @@ def main():
 	mainClock = pygame.time.Clock()
 
 	player_image = pygame.image.load("img/player.png")
+	
 	background = pygame.image.load("img/background.png")
 	ASTEROID_image = pygame.image.load("img/Rock.png")
 	BOSS_image = pygame.image.load("img/Spaceship.png")
@@ -70,7 +71,6 @@ def main():
 	RANDOMCOLOUR = (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))
 	WHITE = (255, 255, 255)
 
-	player = Player()
 	
 	# player bullet variables
 	bulletCounter = 0
@@ -121,10 +121,12 @@ def main():
 	POWERSPEED = 6
 	powerpickups = []
 
-
 	fontRenderer = FontRenderer()
+	player       = Player("img/player.png")
 	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png")
-	fighters     = FighterFactory("img/enemy_1.png", "img/explosion_tiles.bmp", "audio\explosion_1.wav")
+	fighters     = FighterFactory("img/enemy_1.png",
+						"img/explosion_tiles.bmp",
+						"audio\explosion_1.wav")
 
 	# Splash screen specific variables
 	flyingRight = True # else flying left
@@ -302,13 +304,11 @@ def main():
 				player.rect.right += MOVESPEED
 				player.x += MOVESPEED
 
-			# move the asteroids
-			asteroids.move()
-			#move fighters
-			fighters.move()
+			# move things
 
-			# for b in fighters:
-			# 	b['rect'].move_ip(0, b['speed'])
+			asteroids.move()
+
+			fighters.move()
 
 			for b in bossfighters:
 				if boss_y < 150:
@@ -350,6 +350,7 @@ def main():
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							bossbulletCounter = 0
+
 							if bossbulletCounterTotal >= NEWBOSSBULLETWAVESTOP:
 								bossbulletCounterTotal = 0
 								bossbulletwaveCounter = 0
@@ -368,7 +369,6 @@ def main():
 				b['rect'].move_ip(0, b['speed'])
 
 
-
 			player.score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image, powerpickups, POWERSIZE, POWERSPEED, POWER_image)
 
 
@@ -380,9 +380,6 @@ def main():
 
 			player.health = fighters.collide_player(player.rect, player.health)
 
-			#updated to earn score whilst collecting pickups with full health
-
-			
 			for i in bullets:
 				for f in bossfighters:
 					if (i['rect']).colliderect(f['rect']):
@@ -404,16 +401,6 @@ def main():
 				
 
 			player.collide_health(healthpickups, 20)
-
-			# for b in healthpickups:
-			# 	if player.rect.colliderect(b['rect']):
-			# 		healthpickups.remove(b)					
-			# 		if player.health < 100:
-			# 			player.health += 20
-			# 		if player.health == 100:
-			# 			player.score += 20
-			# 		if player.health > 100:
-			# 			player.health = 100
 					
 			for b in powerpickups:
 				if player.rect.colliderect(b['rect']):
@@ -436,7 +423,7 @@ def main():
 			screen.blit(background, (0,backgroundY))
 			screen.blit(background,(0, backgroundY-800))
 
-			screen.blit(player_image,(player.rect))
+			player.draw(screen)
 
 			asteroids.draw(screen)
 
