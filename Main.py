@@ -123,16 +123,12 @@ def main():
 	powerpickups = []
 
 	fontRenderer = FontRenderer()
-<<<<<<< HEAD
+
 	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png", "img/explosion_tiles_ast.bmp", "audio\explosion_1.wav")
 	fighters     = FighterFactory("img/enemy_1.png", "img/explosion_tiles.bmp", "audio\explosion_1.wav")
-=======
+
 	player       = Player("img/player.png")
-	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png")
-	fighters     = FighterFactory("img/enemy_1.png",
-						"img/explosion_tiles.bmp",
-						"audio\explosion_1.wav")
->>>>>>> origin/master
+
 
 	# Splash screen specific variables
 	splashPart1 = True
@@ -429,10 +425,7 @@ def main():
 				
 
 			player.collide_health(healthpickups, 20)
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
 					
 			for b in powerpickups:
 				if player.rect.colliderect(b['rect']):
