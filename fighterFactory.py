@@ -35,7 +35,7 @@ class FighterFactory:
 		for f in self.fighters:
 			target.blit(f['surface'], f['rect'])
 
-	def collide_bullets(self, bullets, explosions, expsize, expscale, expframes):
+	def collide_bullets(self, bullets, explosions, expsize, expscale, expframes, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image):
 		fightersDestoryed = 0
 
 		for i in bullets:
@@ -47,6 +47,12 @@ class FighterFactory:
 						self.fighters.remove(f)
 						bullets.remove(i)
 						fightersDestoryed += 1
+						z = random.randint(1, 10)
+						if z > 8:
+							healthpickups.append({'rect': pygame.Rect(f['rect'].left, f['rect'].top, HEALTHSIZE, HEALTHSIZE),
+								'speed': HEALTHSPEED,
+								'surface':pygame.transform.scale(HEALTH_image, (HEALTHSIZE, HEALTHSIZE))})
+							
 		# add up the amount of fighters destroyed and modify the score
 		return (self.reward * fightersDestoryed)
 
