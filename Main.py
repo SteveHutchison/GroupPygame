@@ -124,7 +124,7 @@ def main():
 
 
 	fontRenderer = FontRenderer()
-	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png")
+	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png", "img/explosion_tiles_ast.bmp", "audio\explosion_1.wav")
 	fighters     = FighterFactory("img/enemy_1.png", "img/explosion_tiles.bmp", "audio\explosion_1.wav")
 
 	# Splash screen specific variables
@@ -288,7 +288,7 @@ def main():
 					bulletCounter = 0
 
 			# Delete things that are outside the screen
-			player.score += asteroids.remove(WINDOWHEIGHT)
+			player.score += asteroids.remove(WINDOWHEIGHT, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES)
 
 			fighters.remove(WINDOWHEIGHT)
 			
@@ -391,7 +391,7 @@ def main():
 
 			# TODO make this the other way round,
 			# bullets should be removed if they are touching asteroids
-			asteroids.collide_bullets(bullets)
+			asteroids.collide_bullets(bullets, explosions)
 			
 			player.health = asteroids.collide_player(player.rect, player.health)
 
