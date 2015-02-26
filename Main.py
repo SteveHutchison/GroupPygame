@@ -318,13 +318,13 @@ def main():
 
 			
 			for b in boss_bullets:
-				if player.colliderect(b['rect']):
+				if player.rect.colliderect(b['rect']):
 					boss_bullets.remove(b)
-					playerHealth -= 5
+					player.health -= 5
 				
 
 			for b in healthpickups:
-				if player.colliderect(b['rect']):
+				if player.rect.colliderect(b['rect']):
 					healthpickups.remove(b)					
 					if player.health < 100:
 						player.health += 20
