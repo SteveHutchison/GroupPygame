@@ -47,12 +47,16 @@ class FighterFactory:
 						self.fighters.remove(f)
 						bullets.remove(i)
 						fightersDestoryed += 1
+
 						z = random.randint(1, 10)
 						if z > 8:
 							healthpickups.append({'rect': pygame.Rect(f['rect'].left, f['rect'].top, HEALTHSIZE, HEALTHSIZE),
 								'speed': HEALTHSPEED,
 								'surface':pygame.transform.scale(HEALTH_image, (HEALTHSIZE, HEALTHSIZE))})
 							
+
+						self.deathSound.play()
+
 		# add up the amount of fighters destroyed and modify the score
 		return (self.reward * fightersDestoryed)
 
