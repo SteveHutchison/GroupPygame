@@ -405,15 +405,6 @@ def main():
 
 			player.collide_health(healthpickups, 20)
 
-			# for b in healthpickups:
-			# 	if player.rect.colliderect(b['rect']):
-			# 		healthpickups.remove(b)					
-			# 		if player.health < 100:
-			# 			player.health += 20
-			# 		if player.health == 100:
-			# 			player.score += 20
-			# 		if player.health > 100:
-			# 			player.health = 100
 					
 			for b in powerpickups:
 				if player.rect.colliderect(b['rect']):
@@ -442,8 +433,7 @@ def main():
 
 			fighters.draw(screen)
 
-			# for f in fighters:
-			# 	screen.blit(f['surface'], f['rect'])
+			#draw things on screen
 
 			for b in bullets:
 				screen.blit(b['surface'], b['rect'])
