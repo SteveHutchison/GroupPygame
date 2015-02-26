@@ -188,16 +188,12 @@ def main():
 				if event.type == KEYDOWN:
 					# change the keyboard variables
 					if event.key == K_LEFT or event.key == ord('a'):
-						#moveRight = False
 						moveLeft = True
 					if event.key == K_RIGHT or event.key == ord('d'):
-						#moveLeft = False
 						moveRight = True
 					if event.key == K_UP or event.key == ord('w'):
-						#moveDown = False
 						moveUp = True
 					if event.key == K_DOWN or event.key == ord('s'):
-						#moveUp = False
 						moveDown = True
 					if event.key == K_SPACE:
 						player.shooting = True
