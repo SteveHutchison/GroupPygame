@@ -89,7 +89,7 @@ def main():
 	NEWBOSSBULLETWAVESTOP = 20
 	BOSSBULLETSIZE = 16
 	BOSSBULLETSPEEDY = 12
-	BOSSBULLETSPEEDX = 4
+	BOSSBULLETSPEEDX = 8
 	boss_bullets = []
 	
 	# boss fighter variables
@@ -123,11 +123,12 @@ def main():
 	powerpickups = []
 
 	fontRenderer = FontRenderer()
+
+	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png", "img/explosion_tiles_ast.bmp", "audio\explosion_1.wav")
+	fighters     = FighterFactory("img/enemy_1.png", "img/explosion_tiles.bmp", "audio\explosion_1.wav")
+
 	player       = Player("img/player.png")
-	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png")
-	fighters     = FighterFactory("img/enemy_1.png",
-						"img/explosion_tiles.bmp",
-						"audio\explosion_1.wav")
+
 
 	# Splash screen specific variables
 	splashPart1 = True
@@ -290,7 +291,7 @@ def main():
 					bulletCounter = 0
 
 			# Delete things that are outside the screen
-			player.score += asteroids.remove(WINDOWHEIGHT)
+			player.score += asteroids.remove(WINDOWHEIGHT, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES)
 
 			fighters.remove(WINDOWHEIGHT)
 			
@@ -351,19 +352,19 @@ def main():
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 32, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (-0.3*BOSSBULLETSPEEDX, 0.5*0.95*BOSSBULLETSPEEDY),
+										'speed':  (-0.15*BOSSBULLETSPEEDX, 0.5*0.95*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET2_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 64, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (0.3*BOSSBULLETSPEEDX, 0.5*0.95*BOSSBULLETSPEEDY),
+										'speed':  (0.15*BOSSBULLETSPEEDX, 0.5*0.95*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET2_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 16, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (-BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
+										'speed':  (-0.5*BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 80, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
+										'speed':  (0.5*BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							bossbulletCounter = 0
@@ -391,7 +392,7 @@ def main():
 
 			# TODO make this the other way round,
 			# bullets should be removed if they are touching asteroids
-			asteroids.collide_bullets(bullets)
+			asteroids.collide_bullets(bullets, explosions)
 			
 			player.health = asteroids.collide_player(player.rect, player.health)
 
@@ -412,9 +413,9 @@ def main():
 					BOSSSIZE += 8
 					BOSSBULLETSIZE += 4
 					BOSSBULLETSPEEDY += 2
-
 					# increase the players max health
 					player.maxHealth += 10
+					BOSSBULLETSPEEDX += 1
 			
 			for b in boss_bullets:
 				if player.rect.colliderect(b['rect']):
@@ -427,6 +428,7 @@ def main():
 				
 
 			player.collide_health(healthpickups, 20)
+
 					
 			for b in powerpickups:
 				if player.rect.colliderect(b['rect']):
@@ -454,8 +456,7 @@ def main():
 
 			fighters.draw(screen)
 
-			# for f in fighters:
-			# 	screen.blit(f['surface'], f['rect'])
+			#draw things on screen
 
 			for b in bullets:
 				screen.blit(b['surface'], b['rect'])
@@ -506,14 +507,21 @@ def main():
 						for b in healthpickups:
 							healthpickups.remove(b)
 						healthpickups = []
+						for b in powerpickups:
+							powerpickups.remove(b)
+						powerpickups = []
 
 						player.reset(300, 700)
 
 						bossfighterCounter = 0
 
-						boss_health = 1000
+						player.power = 1
 						
-						boss_health_init = 1000
+						boss_health = 800
+						boss_health_init = 800
+						BOSSBULLETSIZE = 16
+						BOSSBULLETSPEEDY = 12
+						BOSSSIZE = 96
 
 						gameOver = False
 

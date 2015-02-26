@@ -2,11 +2,13 @@
 import pygame, random
 
 class AsteroidFactory:
-	def __init__(self, image_path):
+	def __init__(self, image_path, death_image_path, death_sound_path):
 		## variables declared here are unique to each instance
 
 		self.image = pygame.image.load(image_path)
-
+		self.deathImage = pygame.image.load(death_image_path)
+		self.deathSound = pygame.mixer.Sound(death_sound_path)
+		
 		self.size = 50
 		self.MAX_SPEED = 5
 		self.MIN_SPEED = 2
@@ -36,7 +38,7 @@ class AsteroidFactory:
 			self.counter = 0
 
 
-	def remove(self, height):
+	def remove(self, height, explosions, expsize, expscale, expframes):
 		asteroidsRemoved = 0
 
 		for a in self.asteroids[:]:
@@ -46,7 +48,11 @@ class AsteroidFactory:
 				asteroidsRemoved += 1
 			elif a['health'] <= 0:
 				# no points for shooting asteroids
+				explosions.append({'frame': 0,
+						'rect': pygame.Rect(a['rect'].left, a['rect'].top, expsize, expsize),
+						'surface':pygame.transform.scale(self.deathImage, (expsize*expframes/expscale, expsize/expscale))}) 
 				self.asteroids.remove(a)
+				self.deathSound.play()
 
 		return self.reward * asteroidsRemoved
 
@@ -58,7 +64,7 @@ class AsteroidFactory:
 		for a in self.asteroids:
 			target.blit(a['surface'], a['rect'])
 
-	def collide_bullets(self, bullets):
+	def collide_bullets(self, bullets, explosions):
 		for a in self.asteroids:
 			for b in bullets:
 				if (b['rect']).colliderect(a['rect']):
