@@ -19,6 +19,7 @@ def main():
 	mainClock = pygame.time.Clock()
 
 	player_image = pygame.image.load("img/player.png")
+	
 	background = pygame.image.load("img/background.png")
 	ASTEROID_image = pygame.image.load("img/Rock.png")
 	BOSS_image = pygame.image.load("img/Spaceship.png")
@@ -70,7 +71,6 @@ def main():
 	RANDOMCOLOUR = (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))
 	WHITE = (255, 255, 255)
 
-	player = Player()
 	
 	# player bullet variables
 	bulletCounter = 0
@@ -122,10 +122,13 @@ def main():
 	POWERSPEED = 6
 	powerpickups = []
 
-
 	fontRenderer = FontRenderer()
-	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png")
+
+	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png", "img/explosion_tiles_ast.bmp", "audio\explosion_1.wav")
 	fighters     = FighterFactory("img/enemy_1.png", "img/explosion_tiles.bmp", "audio\explosion_1.wav")
+
+	player       = Player("img/player.png")
+
 
 	# Splash screen specific variables
 	splashPart1 = True
@@ -288,7 +291,7 @@ def main():
 					bulletCounter = 0
 
 			# Delete things that are outside the screen
-			player.score += asteroids.remove(WINDOWHEIGHT)
+			player.score += asteroids.remove(WINDOWHEIGHT, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES)
 
 			fighters.remove(WINDOWHEIGHT)
 			
@@ -319,13 +322,11 @@ def main():
 				player.rect.right += MOVESPEED
 				player.x += MOVESPEED
 
-			# move the asteroids
-			asteroids.move()
-			#move fighters
-			fighters.move()
+			# move things
 
-			# for b in fighters:
-			# 	b['rect'].move_ip(0, b['speed'])
+			asteroids.move()
+
+			fighters.move()
 
 			for b in bossfighters:
 				if boss_y < 150:
@@ -367,6 +368,7 @@ def main():
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							bossbulletCounter = 0
+
 							if bossbulletCounterTotal >= NEWBOSSBULLETWAVESTOP:
 								bossbulletCounterTotal = 0
 								bossbulletwaveCounter = 0
@@ -385,21 +387,17 @@ def main():
 				b['rect'].move_ip(0, b['speed'])
 
 
-
 			player.score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image, powerpickups, POWERSIZE, POWERSPEED, POWER_image)
 
 
 			# TODO make this the other way round,
 			# bullets should be removed if they are touching asteroids
-			asteroids.collide_bullets(bullets)
+			asteroids.collide_bullets(bullets, explosions)
 			
 			player.health = asteroids.collide_player(player.rect, player.health)
 
 			player.health = fighters.collide_player(player.rect, player.health)
 
-			#updated to earn score whilst collecting pickups with full health
-
-			
 			for i in bullets:
 				for f in bossfighters:
 					if (i['rect']).colliderect(f['rect']):
@@ -429,15 +427,6 @@ def main():
 
 			player.collide_health(healthpickups, 20)
 
-			# for b in healthpickups:
-			# 	if player.rect.colliderect(b['rect']):
-			# 		healthpickups.remove(b)					
-			# 		if player.health < 100:
-			# 			player.health += 20
-			# 		if player.health == 100:
-			# 			player.score += 20
-			# 		if player.health > 100:
-			# 			player.health = 100
 					
 			for b in powerpickups:
 				if player.rect.colliderect(b['rect']):
@@ -460,14 +449,13 @@ def main():
 			screen.blit(background, (0,backgroundY))
 			screen.blit(background,(0, backgroundY-800))
 
-			screen.blit(player_image,(player.rect))
+			player.draw(screen)
 
 			asteroids.draw(screen)
 
 			fighters.draw(screen)
 
-			# for f in fighters:
-			# 	screen.blit(f['surface'], f['rect'])
+			#draw things on screen
 
 			for b in bullets:
 				screen.blit(b['surface'], b['rect'])
