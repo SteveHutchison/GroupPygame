@@ -25,12 +25,12 @@ def main():
 	BOSS_image = pygame.image.load("img/Spaceship.png")
 	BULLET_image = pygame.image.load("img/bullet.png")
 	BOSSBULLET_image = pygame.image.load("img/enemy_bullet.png")
+	BOSSBULLET2_image = pygame.image.load("img/enemy_bullet2.png")
 	EXPLOSION_image = pygame.image.load("img/explosion_tiles.bmp")
 	HEALTH_image = pygame.image.load("img/HealthPowerUp.png")
 	
 	POWER_image = pygame.image.load("img/Bolt.png")
 
-	BULLET_image = pygame.image.load("img/bullet.png")
 	bulletSound_1  = pygame.mixer.Sound("M:/groupPy/audio/shoot_1.wav")
 	bulletSound_2  = pygame.mixer.Sound("M:/groupPy/audio/shoot_2.wav")
 	bulletSound_3  = pygame.mixer.Sound("M:/groupPy/audio/shoot_3.wav")
@@ -129,11 +129,13 @@ def main():
 						"audio\explosion_1.wav")
 
 	# Splash screen specific variables
-	flyingRight = True # else flying left
-	splashPlayer = pygame.Rect(300, 700, 32, 32)
+	splashPart1 = True
 	splashPlayerX = 0
 	splashPlayerY = 600
+	splashBossX = 300-32
+	splashBossY = -64
 	playerRotated = pygame.transform.rotate(player_image, -90)
+	bossRotated = pygame.transform.rotate(BOSS_image, 0)
 	# Splash Screen
 	while splashScreen == True:
 		for event in pygame.event.get():
@@ -157,21 +159,34 @@ def main():
 		screen.blit(background, (0,backgroundY))
 		screen.blit(background,(0, backgroundY-800))
 		
-		# Move and Draw player flying
-		if flyingRight == True:
-			splashPlayerX = splashPlayerX + 2
+		if splashPart1:
+			if splashPlayerX < 600:
+				playerRotated = pygame.transform.rotate(player_image, -90)
+				splashPlayerX = splashPlayerX + 2
+			elif splashBossY < 800:
+				bossRotated = pygame.transform.rotate(BOSS_image, 0)
+				splashBossY = splashBossY + 5
+				if splashBossY >= 800:
+					# Go to part 2
+					splashPart1 = False
 		else:
-			splashPlayerX = splashPlayerX - 2;
-		if splashPlayerX > 600:
-			flyingRight = False
-			playerRotated = pygame.transform.rotate(player_image, 90)
-			splashPlayerY = random.randint(0, 800)
-		elif splashPlayerX < -32:
-			flyingRight = True
-			playerRotated = pygame.transform.rotate(player_image, -90)
-			splashPlayerY = random.randint(0, 800)
+			if splashPlayerX > -32:
+				playerRotated = pygame.transform.rotate(player_image, 90)
+				splashPlayerX = splashPlayerX - 2
+			elif splashBossY > -64:
+				bossRotated = pygame.transform.rotate(BOSS_image, 180)
+				splashBossY = splashBossY - 5
+				if splashBossY <= -64:
+					# Reset placement and go back to part 1
+					splashPart1 = True
+					splashPlayerX = -32
+					splashPlayerY = random.randint(0, 800)
+					splashBossY = -64
+		
 		# Draw player
 		screen.blit(playerRotated,(splashPlayerX, splashPlayerY))
+		screen.blit(bossRotated,(splashBossX, splashBossY))
+		
 		# Draw Title
 		fontRenderer.draw_title("Press Space to play!", (50, 300), screen)
 		
@@ -333,20 +348,20 @@ def main():
 										'speed':  (0, BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
+							boss_bullets.append({'rect': pygame.Rect(boss_x + 32, boss_y, BULLETSIZE, BULLETSIZE),
+										'speed':  (-0.3*BOSSBULLETSPEEDX, 0.5*0.95*BOSSBULLETSPEEDY),
+										'surface':pygame.transform.scale(BOSSBULLET2_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
+										})
+							boss_bullets.append({'rect': pygame.Rect(boss_x + 64, boss_y, BULLETSIZE, BULLETSIZE),
+										'speed':  (0.3*BOSSBULLETSPEEDX, 0.5*0.95*BOSSBULLETSPEEDY),
+										'surface':pygame.transform.scale(BOSSBULLET2_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
+										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 16, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (-BOSSBULLETSPEEDX, 0.95*BOSSBULLETSPEEDY),
+										'speed':  (-BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 80, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (BOSSBULLETSPEEDX, 0.95*BOSSBULLETSPEEDY),
-										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
-										})
-							boss_bullets.append({'rect': pygame.Rect(boss_x + 16, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (-2*BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
-										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
-										})
-							boss_bullets.append({'rect': pygame.Rect(boss_x + 80, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (2*BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
+										'speed':  (BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							bossbulletCounter = 0
