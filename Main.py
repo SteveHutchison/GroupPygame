@@ -19,10 +19,14 @@ def main():
 	background = pygame.image.load("img/background.png")
 	ASTEROID_image = pygame.image.load("img/Rock.png")
 	BOSS_image = pygame.image.load("M:/groupPy/img/Spaceship.png")
+
 	BULLET_image = pygame.image.load("img/bullet.png")
+	bulletSound_1  = pygame.mixer.Sound("M:/groupPy/audio/shoot_1.wav")
+	bulletSound_2  = pygame.mixer.Sound("M:/groupPy/audio/shoot_2.wav")
+	bulletSound_3  = pygame.mixer.Sound("M:/groupPy/audio/shoot_3.wav")
 
 	#set up music
-	pygame.mixer.music.load('audio/backgroundmusic.mp3')
+	pygame.mixer.music.load("audio/backgroundmusic.mp3")
 
 	backgroundRect = background.get_rect()
 	backgroundArea = backgroundRect
@@ -136,6 +140,7 @@ def main():
 						moveDown = False
 					if event.key == K_SPACE:
 						shooting = False
+						bulletCounter = NEWBULLET
 
 			# UPDATE EVERYTHING
 			asteroids.spawn(WINDOWWIDTH)
@@ -155,11 +160,13 @@ def main():
 			if shooting == True:
 				bulletCounter += 1
 				if bulletCounter >= NEWBULLET:
+					bulletSound_1.play()
 					bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
 								'speed':  (0, BULLETSPEEDY),
 								'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 								})
 					if power >= 2:
+						bulletSound_2.play()
 						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
 									'speed': (BULLETSPEEDX, 0.95*BULLETSPEEDY), 
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
@@ -168,7 +175,8 @@ def main():
 									'speed':  (-BULLETSPEEDX, 0.95*BULLETSPEEDY),
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 									})
-					if power >= 3:			
+					if power >= 3:	
+						bulletSound_3.play()		
 						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
 									'speed': (2*BULLETSPEEDX, 0.9*BULLETSPEEDY), 
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
