@@ -94,7 +94,8 @@ def main():
 	
 	# boss fighter variables
 	bossfighterCounter = 0
-	boss_health = 1000
+	boss_health_init = 800
+	boss_health = 800
 	boss_x = 0
 	boss_y = 0
 	NEWBOSS = 500
@@ -246,6 +247,7 @@ def main():
 							})
 				boss_x = 316
 				boss_y = (0 - BOSSSIZE)
+				
 
 			#player shooting mechanic / fires extra bullets with each level of power
 			if player.shooting == True:
@@ -404,6 +406,12 @@ def main():
 			if boss_health <= 0:
 				for b in bossfighters:
 					bossfighters.remove(b)
+					bossfighterCounter = 0
+					boss_health = boss_health_init + 200
+					boss_health_init = boss_health
+					BOSSSIZE += 8
+					BOSSBULLETSIZE += 4
+					BOSSBULLETSPEEDY += 2
 			
 			for b in boss_bullets:
 				if player.rect.colliderect(b['rect']):
@@ -502,6 +510,8 @@ def main():
 						bossfighterCounter = 0
 
 						boss_health = 1000
+						
+						boss_health_init = 1000
 
 						gameOver = False
 
