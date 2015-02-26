@@ -7,6 +7,9 @@ from fontRenderer import *
 import asteroidFactory
 from asteroidFactory import *
 
+import fighterFactory
+from fighterFactory import *
+
 def main():
 	# set up pygame
 	pygame.init()
@@ -15,11 +18,11 @@ def main():
 	player_image = pygame.image.load("img/player.png")
 	background = pygame.image.load("img/background.png")
 	ASTEROID_image = pygame.image.load("img/Rock.png")
-	FIGHTER_image = pygame.image.load("img/enemy_1.png")
 	BOSS_image = pygame.image.load("M:/groupPy/img/Spaceship.png")
 	BULLET_image = pygame.image.load("img/bullet.png")
 	EXPLOSION_image = pygame.image.load("img/explosion_tiles.bmp")
 	HEALTH_image = pygame.image.load("img/HealthPowerUp.png")
+
 
 	#set up music
 	pygame.mixer.music.load('audio/backgroundmusic.mp3')
@@ -83,13 +86,6 @@ def main():
 	BOSSSPEEDX = 4
 	bossfighters = []
 
-	# fighter variables
-	fighterCounter = 0
-	NEWFIGHTER = 20
-	FIGHTERSIZE = 30
-	FIGHTERSPEED = 12
-	fighters = []
-	
 	# explosion variables
 	EXPLOSIONFRAMES = 17
 	EXPLOSIONSIZE = 200
@@ -103,8 +99,8 @@ def main():
 	
 
 	fontRenderer = FontRenderer()
-
 	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png")
+	fighters     = FighterFactory("img/enemy_1.png", "img/explosion_tiles.bmp", "audio\explosion.ogg")
 
 	while gameRunning == True:
 		# start music loop
@@ -118,16 +114,16 @@ def main():
 				if event.type == KEYDOWN:
 					# change the keyboard variables
 					if event.key == K_LEFT or event.key == ord('a'):
-						moveRight = False
+						#moveRight = False
 						moveLeft = True
 					if event.key == K_RIGHT or event.key == ord('d'):
-						moveLeft = False
+						#moveLeft = False
 						moveRight = True
 					if event.key == K_UP or event.key == ord('w'):
-						moveDown = False
+						#moveDown = False
 						moveUp = True
 					if event.key == K_DOWN or event.key == ord('s'):
-						moveUp = False
+						#moveUp = False
 						moveDown = True
 					if event.key == K_SPACE:
 						shooting = True
@@ -153,15 +149,7 @@ def main():
 			# UPDATE EVERYTHING
 			asteroids.spawn(WINDOWWIDTH)
 
-				
-			fighterCounter += 1
-			if fighterCounter >= NEWFIGHTER:
-							
-				fighters.append({'rect': pygame.Rect(random.randint(0, WINDOWWIDTH-FIGHTERSIZE), 0 - FIGHTERSIZE, FIGHTERSIZE, FIGHTERSIZE),
-							'speed': FIGHTERSPEED,
-							'surface':pygame.transform.scale(FIGHTER_image, (FIGHTERSIZE, FIGHTERSIZE))
-							})
-				fighterCounter = 0
+			fighters.spawn(WINDOWWIDTH)
 			
 			bossfighterCounter += 1
 			if bossfighterCounter == NEWBOSS:
@@ -173,7 +161,6 @@ def main():
 				boss_x = 316
 				boss_y = 800 - (0 - BOSSSIZE)
 
-			
 			if shooting == True:
 				bulletCounter += 1
 				if bulletCounter >= NEWBULLET:
@@ -211,12 +198,9 @@ def main():
 					bulletCounter = 0
 
 			# Delete things that are outside the screen
-			asteroids.remove(score, WINDOWHEIGHT)
+			score += asteroids.remove(WINDOWHEIGHT)
 
-			for b in fighters[:]:
-				if b['rect'].top > WINDOWHEIGHT:
-					fighters.remove(b)
-					score += 10
+			fighters.remove(WINDOWHEIGHT)
 					
 			for b in bullets[:]:
 				if b['rect'].bottom < 0:
@@ -244,8 +228,11 @@ def main():
 			# move the asteroids
 			asteroids.move()
 
-			for b in fighters:
-				b['rect'].move_ip(0, b['speed'])
+			fighters.move()
+
+			# for b in fighters:
+			# 	b['rect'].move_ip(0, b['speed'])
+
 			for b in bossfighters:
 				if boss_y > 650:
 					b['rect'].move_ip(0, BOSSSPEEDY)
@@ -264,37 +251,18 @@ def main():
 			for b in healthpickups:
 				b['rect'].move_ip(0, b['speed'])
 
-			# check for collisions
-			for i in bullets:
-				for b in fighters:
-					if (i['rect']).colliderect(b['rect']):
-						explosions.append({'frame': 0,
-						'rect': pygame.Rect(b['rect'].left, b['rect'].top, EXPLOSIONSIZE, EXPLOSIONSIZE),
-						'surface':pygame.transform.scale(EXPLOSION_image, (EXPLOSIONSIZE*EXPLOSIONFRAMES/EXPLOSIONSCALE, EXPLOSIONSIZE/EXPLOSIONSCALE))}) 
-						score += 100
-						bullets.remove(i)
-						fighters.remove(b)
-						effect = pygame.mixer.Sound('audio\explosion.ogg')
-						effect.play()
-						z = random.randint(1, 10)
-						if z > 8:
-							healthpickups.append({'rect': pygame.Rect(b['rect'].left, b['rect'].top, HEALTHSIZE, HEALTHSIZE),
-								'speed': HEALTHSPEED,
-								'surface':pygame.transform.scale(HEALTH_image, (HEALTHSIZE, HEALTHSIZE))})
+
+
+			score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image)
+
 
 			# TODO make this the other way round,
 			# bullets should be removed if they are touching asteroids
-			asteroids.remove_if_touching(bullets)
+			asteroids.collide_bullets(bullets)
 			
-			playerHealth = asteroids.collide_and_hurt(player, playerHealth)
+			playerHealth = asteroids.collide_player(player, playerHealth)
 
-			for b in fighters:
-				if player.colliderect(b['rect']):
-					fighters.remove(b)
-					playerHealth -= 30
-					print (playerHealth)
-					effect = pygame.mixer.Sound('audio\explosion.ogg')
-					effect.play()
+			playerHealth = fighters.collide_player(player, playerHealth)
 
 			for b in healthpickups:
 				if player.colliderect(b['rect']):
@@ -309,7 +277,8 @@ def main():
 
 
 			# DRAW PHASE
-			# draw the black background onto the surface
+
+			# draw the scrolling backgound
 			backgroundY = backgroundY + 1
 			if backgroundY == 800:
 				backgroundY = 0
@@ -321,8 +290,11 @@ def main():
 
 			asteroids.draw(screen)
 
-			for f in fighters:
-				screen.blit(f['surface'], f['rect'])	
+			fighters.draw(screen)
+
+			# for f in fighters:
+			# 	screen.blit(f['surface'], f['rect'])
+
 			for b in bullets:
 				screen.blit(b['surface'], b['rect'])	
 			for b in bossfighters:
@@ -340,7 +312,6 @@ def main():
 			pygame.display.update()
 			mainClock.tick(100)
 
-				
 		while gameOver == True:
 			for event in pygame.event.get():
 				if event.type == QUIT:
@@ -351,11 +322,9 @@ def main():
 						pygame.quit()
 						sys.exit()
 					if event.key == ord('r'):
+						# reset everything
 						asteroids.remove_all()
-
-						for b in fighters:
-							fighters.remove(b)
-						fighters = []
+						fighters.remove_all()
 						for b in bullets:
 							bullets.remove(b)
 						bullets = []
@@ -371,11 +340,12 @@ def main():
 						player = pygame.Rect(300, 700, 32, 32)
 						player_x = 316
 						player_y = 700
+						shooting = False
+						gameOver = False
 						moveLeft = False
 						moveRight = False
-						moveUp = False
 						moveDown = False
-						gameOver = False
+						moveUp = False
 
 			fontRenderer.draw_title("Press R to retry", (100, 300), screen)
 
@@ -385,6 +355,7 @@ def main():
 			# draw the window onto the screen
 			pygame.display.update()
 			mainClock.tick(40)
+
 	
 if __name__ == '__main__': main()
 
