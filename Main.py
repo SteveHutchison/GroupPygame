@@ -391,15 +391,17 @@ def main():
 					player.health -= 5
 				
 
-			for b in healthpickups:
-				if player.rect.colliderect(b['rect']):
-					healthpickups.remove(b)					
-					if player.health < 100:
-						player.health += 20
-					if player.health == 100:
-						player.score += 20
-					if player.health > 100:
-						player.health = 100
+			player.collide_health(healthpickups, 20)
+
+			# for b in healthpickups:
+			# 	if player.rect.colliderect(b['rect']):
+			# 		healthpickups.remove(b)					
+			# 		if player.health < 100:
+			# 			player.health += 20
+			# 		if player.health == 100:
+			# 			player.score += 20
+			# 		if player.health > 100:
+			# 			player.health = 100
 					
 			#check player health
 			if player.health <= 0:
@@ -439,7 +441,7 @@ def main():
 			# draw the stats
 			fontRenderer.draw_stat("Score: ", player.score, (10,10), screen)
 			fontRenderer.draw_stat("Health: ", player.health, (10, 40), screen)
-			
+
 			if bossfighters:
 				fontRenderer.draw_stat("Boss Health: ", boss_health, (10, 70), screen)
 

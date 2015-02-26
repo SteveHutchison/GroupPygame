@@ -5,6 +5,7 @@ class Player:
 	x = rect.x + (rect.width/2)
 	y = rect.y + (rect.height/2)
 	score = 0
+	maxHealth = 100
 	health = 100
 	shooting = False
 	maxPower = 4
@@ -21,3 +22,16 @@ class Player:
 		self.y = 700
 		self.shooting = False
 		self.power = 1
+
+	def collide_health(self, health, amount):
+		for h in health:
+				if self.rect.colliderect(h['rect']):
+					health.remove(h)
+
+					# add health up to max
+					self.health += amount
+
+					# if you get more health than you need add it to your score
+					if self.health > self.maxHealth:
+						self.score += (self.health - self.maxHealth) * 2
+						self.health = self.maxHealth
