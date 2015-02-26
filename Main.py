@@ -24,6 +24,8 @@ def main():
 	BOSSBULLET_image = pygame.image.load("img/enemy_bullet.png")
 	EXPLOSION_image = pygame.image.load("img/explosion_tiles.bmp")
 	HEALTH_image = pygame.image.load("img/HealthPowerUp.png")
+	
+	POWER_image = pygame.image.load("img/Bolt.png")
 
 	BULLET_image = pygame.image.load("img/bullet.png")
 	bulletSound_1  = pygame.mixer.Sound("M:/groupPy/audio/shoot_1.wav")
@@ -99,7 +101,7 @@ def main():
 	bossfighterCounter = 0
 	boss_x = 0
 	boss_y = 0
-	NEWBOSS = 200
+	NEWBOSS = 500
 	BOSSSIZE = 96
 	BOSSSPEEDY = 4
 	BOSSSPEEDX = 4
@@ -118,7 +120,10 @@ def main():
 	HEALTHSPEED = 6
 	healthpickups = []
 	
-
+	#power pickup variables
+	POWERSIZE = 32
+	POWERSPEED = 6
+	powerpickups = []
 
 	fontRenderer = FontRenderer()
 	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png")
@@ -149,10 +154,7 @@ def main():
 						moveDown = True
 					if event.key == K_SPACE:
 						shooting = True
-					if event.key == ord('z') and power < max_power:
-						power += 1
-					if event.key == ord('x') and power > 1:
-						power -= 1
+	
 				if event.type == KEYUP:
 					if event.key == K_ESCAPE:
 						pygame.quit()
@@ -305,10 +307,13 @@ def main():
 				
 			for b in healthpickups:
 				b['rect'].move_ip(0, b['speed'])
+				
+			for b in powerpickups:
+				b['rect'].move_ip(0, b['speed'])
 
 
 
-			score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image)
+			score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image, powerpickups, POWERSIZE, POWERSPEED, POWER_image)
 
 
 			# TODO make this the other way round,
@@ -337,6 +342,12 @@ def main():
 						score += 20
 					if playerHealth > 100:
 						playerHealth = 100
+					
+			for b in powerpickups:
+				if player.colliderect(b['rect']):
+					powerpickups.remove(b)					
+					if power < 4:
+						power += 1
 					
 			#check player health
 			if playerHealth <= 0:
@@ -369,6 +380,8 @@ def main():
 			for b in bossfighters:
 				screen.blit(b['surface'], b['rect'])
 			for b in healthpickups:
+				screen.blit(b['surface'], b['rect'])
+			for b in powerpickups:
 				screen.blit(b['surface'], b['rect'])
 			for e in explosions:
 				screen.blit(e['surface'], e['rect'], pygame.Rect((e['frame']*EXPLOSIONSIZE)/5,0,EXPLOSIONSIZE/5,EXPLOSIONSIZE/5))
@@ -406,6 +419,7 @@ def main():
 						bossfighterCounter = 0
 						playerHealth = 100
 						score = 0
+						power = 1
 						player = pygame.Rect(300, 700, 32, 32)
 						player_x = 316
 						player_y = 700
