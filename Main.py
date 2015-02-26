@@ -128,11 +128,13 @@ def main():
 	fighters     = FighterFactory("img/enemy_1.png", "img/explosion_tiles.bmp", "audio\explosion_1.wav")
 
 	# Splash screen specific variables
-	flyingRight = True # else flying left
-	splashPlayer = pygame.Rect(300, 700, 32, 32)
+	splashPart1 = True
 	splashPlayerX = 0
 	splashPlayerY = 600
+	splashBossX = 300-32
+	splashBossY = -64
 	playerRotated = pygame.transform.rotate(player_image, -90)
+	bossRotated = pygame.transform.rotate(BOSS_image, 0)
 	# Splash Screen
 	while splashScreen == True:
 		for event in pygame.event.get():
@@ -156,21 +158,34 @@ def main():
 		screen.blit(background, (0,backgroundY))
 		screen.blit(background,(0, backgroundY-800))
 		
-		# Move and Draw player flying
-		if flyingRight == True:
-			splashPlayerX = splashPlayerX + 2
+		if splashPart1:
+			if splashPlayerX < 600:
+				playerRotated = pygame.transform.rotate(player_image, -90)
+				splashPlayerX = splashPlayerX + 2
+			elif splashBossY < 800:
+				bossRotated = pygame.transform.rotate(BOSS_image, 0)
+				splashBossY = splashBossY + 5
+				if splashBossY >= 800:
+					# Go to part 2
+					splashPart1 = False
 		else:
-			splashPlayerX = splashPlayerX - 2;
-		if splashPlayerX > 600:
-			flyingRight = False
-			playerRotated = pygame.transform.rotate(player_image, 90)
-			splashPlayerY = random.randint(0, 800)
-		elif splashPlayerX < -32:
-			flyingRight = True
-			playerRotated = pygame.transform.rotate(player_image, -90)
-			splashPlayerY = random.randint(0, 800)
+			if splashPlayerX > -32:
+				playerRotated = pygame.transform.rotate(player_image, 90)
+				splashPlayerX = splashPlayerX - 2
+			elif splashBossY > -64:
+				bossRotated = pygame.transform.rotate(BOSS_image, 180)
+				splashBossY = splashBossY - 5
+				if splashBossY <= -64:
+					# Reset placement and go back to part 1
+					splashPart1 = True
+					splashPlayerX = -32
+					splashPlayerY = random.randint(0, 800)
+					splashBossY = -64
+		
 		# Draw player
 		screen.blit(playerRotated,(splashPlayerX, splashPlayerY))
+		screen.blit(bossRotated,(splashBossX, splashBossY))
+		
 		# Draw Title
 		fontRenderer.draw_title("Press Space to play!", (50, 300), screen)
 		
