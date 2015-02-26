@@ -35,7 +35,7 @@ class FighterFactory:
 		for f in self.fighters:
 			target.blit(f['surface'], f['rect'])
 
-	def collide_bullets(self, bullets, explosions, expsize, expscale, expframes, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image):
+	def collide_bullets(self, bullets, explosions, expsize, expscale, expframes, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image, powerpickups, POWERSIZE, POWERSPEED, POWER_image):
 		fightersDestoryed = 0
 
 		for i in bullets:
@@ -48,11 +48,16 @@ class FighterFactory:
 						bullets.remove(i)
 						fightersDestoryed += 1
 
-						z = random.randint(1, 10)
-						if z > 8:
+						z = random.randint(1, 8)
+						if z == 7:
 							healthpickups.append({'rect': pygame.Rect(f['rect'].left, f['rect'].top, HEALTHSIZE, HEALTHSIZE),
 								'speed': HEALTHSPEED,
 								'surface':pygame.transform.scale(HEALTH_image, (HEALTHSIZE, HEALTHSIZE))})
+							
+						if z == 4:
+							powerpickups.append({'rect': pygame.Rect(f['rect'].left, f['rect'].top, POWERSIZE, POWERSIZE),
+								'speed': POWERSPEED,
+								'surface':pygame.transform.scale(POWER_image, (POWERSIZE, POWERSIZE))})
 							
 
 						self.deathSound.play()

@@ -26,6 +26,8 @@ def main():
 	BOSSBULLET_image = pygame.image.load("img/enemy_bullet.png")
 	EXPLOSION_image = pygame.image.load("img/explosion_tiles.bmp")
 	HEALTH_image = pygame.image.load("img/HealthPowerUp.png")
+	
+	POWER_image = pygame.image.load("img/Bolt.png")
 
 	BULLET_image = pygame.image.load("img/bullet.png")
 	bulletSound_1  = pygame.mixer.Sound("M:/groupPy/audio/shoot_1.wav")
@@ -95,7 +97,7 @@ def main():
 	boss_health = 1000
 	boss_x = 0
 	boss_y = 0
-	NEWBOSS = 200
+	NEWBOSS = 500
 	BOSSSIZE = 96
 	BOSSSPEEDY = 4
 	BOSSSPEEDX = 4
@@ -114,6 +116,12 @@ def main():
 	HEALTHSPEED = 6
 	healthpickups = []
 	
+	#power pickup variables
+	POWERSIZE = 32
+	POWERSPEED = 6
+	powerpickups = []
+
+
 	fontRenderer = FontRenderer()
 	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png")
 	fighters     = FighterFactory("img/enemy_1.png", "img/explosion_tiles.bmp", "audio\explosion_1.wav")
@@ -193,10 +201,8 @@ def main():
 						moveDown = True
 					if event.key == K_SPACE:
 						player.shooting = True
-					if event.key == ord('z') and player.power < player.maxPower:
-						player.power += 1
-					if event.key == ord('x') and player.power > 1:
-						player.power -= 1
+	
+
 				if event.type == KEYUP:
 					if event.key == K_ESCAPE:
 						pygame.quit()
@@ -361,8 +367,14 @@ def main():
 				
 			for b in healthpickups:
 				b['rect'].move_ip(0, b['speed'])
+				
+			for b in powerpickups:
+				b['rect'].move_ip(0, b['speed'])
 
-			player.score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image)
+
+
+			player.score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image, powerpickups, POWERSIZE, POWERSPEED, POWER_image)
+
 
 			# TODO make this the other way round,
 			# bullets should be removed if they are touching asteroids
@@ -403,6 +415,12 @@ def main():
 			# 		if player.health > 100:
 			# 			player.health = 100
 					
+			for b in powerpickups:
+				if player.rect.colliderect(b['rect']):
+					powerpickups.remove(b)					
+					if player.power < 4:
+						player.power += 1
+					
 			#check player health
 			if player.health <= 0:
 				gameOver = True
@@ -434,6 +452,8 @@ def main():
 			for b in bossfighters:
 				screen.blit(b['surface'], b['rect'])
 			for b in healthpickups:
+				screen.blit(b['surface'], b['rect'])
+			for b in powerpickups:
 				screen.blit(b['surface'], b['rect'])
 			for e in explosions:
 				screen.blit(e['surface'], e['rect'], pygame.Rect((e['frame']*EXPLOSIONSIZE)/5,0,EXPLOSIONSIZE/5,EXPLOSIONSIZE/5))
@@ -478,7 +498,9 @@ def main():
 						player.reset(300, 700)
 
 						bossfighterCounter = 0
+
 						boss_health = 1000
+
 						gameOver = False
 
 						moveLeft = False
