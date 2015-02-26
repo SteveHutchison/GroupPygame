@@ -48,8 +48,8 @@ class FighterFactory:
 						bullets.remove(i)
 						fightersDestoryed += 1
 
-						z = random.randint(1, 10)
-						if z == 8:
+						z = random.randint(1, 8)
+						if z == 7:
 							healthpickups.append({'rect': pygame.Rect(f['rect'].left, f['rect'].top, HEALTHSIZE, HEALTHSIZE),
 								'speed': HEALTHSPEED,
 								'surface':pygame.transform.scale(HEALTH_image, (HEALTHSIZE, HEALTHSIZE))})
