@@ -397,6 +397,10 @@ def main():
 				if player.rect.colliderect(b['rect']):
 					boss_bullets.remove(b)
 					player.health -= 5
+					
+			for b in bossfighters:
+				if player.rect.colliderect(b['rect']):
+					player.health = 0
 				
 
 			player.collide_health(healthpickups, 20)
