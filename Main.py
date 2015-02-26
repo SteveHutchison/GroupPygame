@@ -20,6 +20,9 @@ def main():
 	ASTEROID_image = pygame.image.load("img/Rock.png")
 	BOSS_image = pygame.image.load("M:/groupPy/img/Spaceship.png")
 
+	EXPLOSION_image = pygame.image.load("img/explosion_tiles.bmp")
+	HEALTH_image = pygame.image.load("img/HealthPowerUp.png")
+
 	BULLET_image = pygame.image.load("img/bullet.png")
 	bulletSound_1  = pygame.mixer.Sound("M:/groupPy/audio/shoot_1.wav")
 	bulletSound_2  = pygame.mixer.Sound("M:/groupPy/audio/shoot_2.wav")
@@ -92,6 +95,12 @@ def main():
 	EXPLOSIONSIZE = 200
 	EXPLOSIONSCALE = 5
 	explosions = []
+	
+	# health pick up variables
+	HEALTHSIZE = 32
+	HEALTHSPEED = 6
+	healthpickups = []
+	
 
 	fontRenderer = FontRenderer()
 	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png")
@@ -246,8 +255,14 @@ def main():
 				
 			for b in bullets:
 				b['rect'].move_ip(b['speed'])
+				
+			for b in healthpickups:
+				b['rect'].move_ip(0, b['speed'])
 
-			score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES)
+
+
+			score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image)
+
 
 			# TODO make this the other way round,
 			# bullets should be removed if they are touching asteroids
@@ -257,6 +272,13 @@ def main():
 
 			playerHealth = fighters.collide_player(player, playerHealth)
 
+			for b in healthpickups:
+				if player.colliderect(b['rect']):
+					healthpickups.remove(b)
+					playerHealth += 20
+					if playerHealth > 100:
+						playerHealth = 100
+					
 			#check player health
 			if playerHealth <= 0:
 				gameOver = True
@@ -284,7 +306,9 @@ def main():
 			for b in bullets:
 				screen.blit(b['surface'], b['rect'])	
 			for b in bossfighters:
-				screen.blit(b['surface'], b['rect'])	
+				screen.blit(b['surface'], b['rect'])
+			for b in healthpickups:
+				screen.blit(b['surface'], b['rect'])
 			for e in explosions:
 				screen.blit(e['surface'], e['rect'], pygame.Rect((e['frame']*EXPLOSIONSIZE)/5,0,EXPLOSIONSIZE/5,EXPLOSIONSIZE/5))
 
@@ -315,6 +339,9 @@ def main():
 						for b in bossfighters:
 							bossfighters.remove(b)
 						bossfighters = []
+						for b in healthpickups:
+							healthpickups.remove(b)
+						healthpickups = []
 						bossfighterCounter = 0
 						playerHealth = 100
 						score = 0
