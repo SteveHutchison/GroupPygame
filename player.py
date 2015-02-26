@@ -20,3 +20,4 @@ class Player:
 		self.x = 316
 		self.y = 700
 		self.shooting = False
+		self.power = 1

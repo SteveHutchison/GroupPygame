@@ -114,8 +114,6 @@ def main():
 	HEALTHSPEED = 6
 	healthpickups = []
 	
-
-
 	fontRenderer = FontRenderer()
 	asteroids    = AsteroidFactory("M:/groupPy/img/Rock.png")
 	fighters     = FighterFactory("img/enemy_1.png", "img/explosion_tiles.bmp", "audio\explosion_1.wav")
@@ -441,7 +439,9 @@ def main():
 			# draw the stats
 			fontRenderer.draw_stat("Score: ", player.score, (10,10), screen)
 			fontRenderer.draw_stat("Health: ", player.health, (10, 40), screen)
-			fontRenderer.draw_stat("Boss Health: ", boss_health, (10, 70), screen)
+			
+			if bossfighters:
+				fontRenderer.draw_stat("Boss Health: ", boss_health, (10, 70), screen)
 
 			# draw the window onto the screen
 			pygame.display.update()
@@ -478,6 +478,7 @@ def main():
 						bossfighterCounter = 0
 						boss_health = 1000
 						gameOver = False
+
 						moveLeft = False
 						moveRight = False
 						moveDown = False
