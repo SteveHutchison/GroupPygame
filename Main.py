@@ -472,13 +472,8 @@ def main():
 						for b in healthpickups:
 							healthpickups.remove(b)
 						healthpickups = []
-						
-						player.health = 100
-						player.score = 0
-						player.rect = pygame.Rect(300, 700, 32, 32)
-						player.x = 316
-						player.y = 700
-						player.shooting = False
+
+						player.reset(300, 700)
 
 						bossfighterCounter = 0
 						boss_health = 1000

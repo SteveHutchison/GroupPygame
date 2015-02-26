@@ -12,3 +12,11 @@ class Player:
 
 	def __init__(self):
 		pass
+
+	def reset(self, x, y):
+		self.rect = pygame.Rect(x, y, 32, 32)
+		self.health = 100
+		self.score = 0
+		self.x = 316
+		self.y = 700
+		self.shooting = False
