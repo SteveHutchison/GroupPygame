@@ -89,7 +89,7 @@ def main():
 	NEWBOSSBULLETWAVESTOP = 20
 	BOSSBULLETSIZE = 16
 	BOSSBULLETSPEEDY = 12
-	BOSSBULLETSPEEDX = 4
+	BOSSBULLETSPEEDX = 8
 	boss_bullets = []
 	
 	# boss fighter variables
@@ -351,19 +351,19 @@ def main():
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 32, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (-0.3*BOSSBULLETSPEEDX, 0.5*0.95*BOSSBULLETSPEEDY),
+										'speed':  (-0.15*BOSSBULLETSPEEDX, 0.5*0.95*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET2_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 64, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (0.3*BOSSBULLETSPEEDX, 0.5*0.95*BOSSBULLETSPEEDY),
+										'speed':  (0.15*BOSSBULLETSPEEDX, 0.5*0.95*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET2_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 16, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (-BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
+										'speed':  (-0.5*BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 80, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
+										'speed':  (0.5*BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							bossbulletCounter = 0
@@ -415,6 +415,7 @@ def main():
 					BOSSSIZE += 8
 					BOSSBULLETSIZE += 4
 					BOSSBULLETSPEEDY += 2
+					BOSSBULLETSPEEDX += 1
 			
 			for b in boss_bullets:
 				if player.rect.colliderect(b['rect']):
@@ -517,14 +518,21 @@ def main():
 						for b in healthpickups:
 							healthpickups.remove(b)
 						healthpickups = []
+						for b in powerpickups:
+							powerpickups.remove(b)
+						powerpickups = []
 
 						player.reset(300, 700)
 
 						bossfighterCounter = 0
 
-						boss_health = 1000
+						player.power = 1
 						
-						boss_health_init = 1000
+						boss_health = 800
+						boss_health_init = 800
+						BOSSBULLETSIZE = 16
+						BOSSBULLETSPEEDY = 12
+						BOSSSIZE = 96
 
 						gameOver = False
 
