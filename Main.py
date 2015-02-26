@@ -188,16 +188,12 @@ def main():
 				if event.type == KEYDOWN:
 					# change the keyboard variables
 					if event.key == K_LEFT or event.key == ord('a'):
-						#moveRight = False
 						moveLeft = True
 					if event.key == K_RIGHT or event.key == ord('d'):
-						#moveLeft = False
 						moveRight = True
 					if event.key == K_UP or event.key == ord('w'):
-						#moveDown = False
 						moveUp = True
 					if event.key == K_DOWN or event.key == ord('s'):
-						#moveUp = False
 						moveDown = True
 					if event.key == K_SPACE:
 						player.shooting = True
@@ -407,15 +403,17 @@ def main():
 					player.health = 0
 				
 
-			for b in healthpickups:
-				if player.rect.colliderect(b['rect']):
-					healthpickups.remove(b)					
-					if player.health < 100:
-						player.health += 20
-					if player.health == 100:
-						player.score += 20
-					if player.health > 100:
-						player.health = 100
+			player.collide_health(healthpickups, 20)
+
+			# for b in healthpickups:
+			# 	if player.rect.colliderect(b['rect']):
+			# 		healthpickups.remove(b)					
+			# 		if player.health < 100:
+			# 			player.health += 20
+			# 		if player.health == 100:
+			# 			player.score += 20
+			# 		if player.health > 100:
+			# 			player.health = 100
 					
 			for b in powerpickups:
 				if player.rect.colliderect(b['rect']):
@@ -463,7 +461,7 @@ def main():
 			# draw the stats
 			fontRenderer.draw_stat("Score: ", player.score, (10,10), screen)
 			fontRenderer.draw_stat("Health: ", player.health, (10, 40), screen)
-			
+
 			if bossfighters:
 				fontRenderer.draw_stat("Boss Health: ", boss_health, (10, 70), screen)
 
