@@ -19,10 +19,17 @@ def main():
 	background = pygame.image.load("img/background.png")
 	ASTEROID_image = pygame.image.load("img/Rock.png")
 	BOSS_image = pygame.image.load("M:/groupPy/img/Spaceship.png")
+
+	EXPLOSION_image = pygame.image.load("img/explosion_tiles.bmp")
+	HEALTH_image = pygame.image.load("img/HealthPowerUp.png")
+
 	BULLET_image = pygame.image.load("img/bullet.png")
+	bulletSound_1  = pygame.mixer.Sound("M:/groupPy/audio/shoot_1.wav")
+	bulletSound_2  = pygame.mixer.Sound("M:/groupPy/audio/shoot_2.wav")
+	bulletSound_3  = pygame.mixer.Sound("M:/groupPy/audio/shoot_3.wav")
 
 	#set up music
-	pygame.mixer.music.load('audio/backgroundmusic.mp3')
+	pygame.mixer.music.load("audio/backgroundmusic.mp3")
 
 	#set background rect equal to the size of the background image
 	backgroundRect = background.get_rect()
@@ -90,6 +97,12 @@ def main():
 	EXPLOSIONSIZE = 200
 	EXPLOSIONSCALE = 5
 	explosions = []
+	
+	# health pick up variables
+	HEALTHSIZE = 32
+	HEALTHSPEED = 6
+	healthpickups = []
+	
 
 
 	fontRenderer = FontRenderer()
@@ -139,6 +152,7 @@ def main():
 						moveDown = False
 					if event.key == K_SPACE:
 						shooting = False
+						bulletCounter = NEWBULLET
 
 			# UPDATE EVERYTHING
 			asteroids.spawn(WINDOWWIDTH)
@@ -165,11 +179,13 @@ def main():
 			if shooting == True:
 				bulletCounter += 1
 				if bulletCounter >= NEWBULLET:
+					bulletSound_1.play()
 					bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
 								'speed':  (0, BULLETSPEEDY),
 								'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 								})
 					if power >= 2:
+						bulletSound_2.play()
 						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
 									'speed': (BULLETSPEEDX, 0.95*BULLETSPEEDY), 
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
@@ -178,7 +194,8 @@ def main():
 									'speed':  (-BULLETSPEEDX, 0.95*BULLETSPEEDY),
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
 									})
-					if power >= 3:			
+					if power >= 3:	
+						bulletSound_3.play()		
 						bullets.append({'rect': pygame.Rect(player_x, player_y, BULLETSIZE, BULLETSIZE),
 									'speed': (2*BULLETSPEEDX, 0.9*BULLETSPEEDY), 
 									'surface':pygame.transform.scale(BULLET_image, (BULLETSIZE, BULLETSIZE))
@@ -248,8 +265,14 @@ def main():
 				
 			for b in bullets:
 				b['rect'].move_ip(b['speed'])
+				
+			for b in healthpickups:
+				b['rect'].move_ip(0, b['speed'])
 
-			score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES)
+
+
+			score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image)
+
 
 			# TODO make this the other way round,
 			# bullets should be removed if they are touching asteroids
@@ -259,6 +282,13 @@ def main():
 
 			playerHealth = fighters.collide_player(player, playerHealth)
 
+			for b in healthpickups:
+				if player.colliderect(b['rect']):
+					healthpickups.remove(b)
+					playerHealth += 20
+					if playerHealth > 100:
+						playerHealth = 100
+					
 			#check player health
 			if playerHealth <= 0:
 				gameOver = True
@@ -286,7 +316,9 @@ def main():
 			for b in bullets:
 				screen.blit(b['surface'], b['rect'])	
 			for b in bossfighters:
-				screen.blit(b['surface'], b['rect'])	
+				screen.blit(b['surface'], b['rect'])
+			for b in healthpickups:
+				screen.blit(b['surface'], b['rect'])
 			for e in explosions:
 				screen.blit(e['surface'], e['rect'], pygame.Rect((e['frame']*EXPLOSIONSIZE)/5,0,EXPLOSIONSIZE/5,EXPLOSIONSIZE/5))
 
@@ -317,6 +349,9 @@ def main():
 						for b in bossfighters:
 							bossfighters.remove(b)
 						bossfighters = []
+						for b in healthpickups:
+							healthpickups.remove(b)
+						healthpickups = []
 						bossfighterCounter = 0
 						playerHealth = 100
 						score = 0
