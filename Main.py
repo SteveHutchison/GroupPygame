@@ -19,12 +19,9 @@ def main():
 	background = pygame.image.load("img/background.png")
 	ASTEROID_image = pygame.image.load("img/Rock.png")
 	BOSS_image = pygame.image.load("M:/groupPy/img/Spaceship.png")
-<<<<<<< HEAD
+
 	BULLET_image = pygame.image.load("img/bullet.png")
 	BOSSBULLET_image = pygame.image.load("img/enemy_bullet.png")
-=======
-
->>>>>>> Upstream/master
 	EXPLOSION_image = pygame.image.load("img/explosion_tiles.bmp")
 	HEALTH_image = pygame.image.load("img/HealthPowerUp.png")
 
@@ -92,13 +89,14 @@ def main():
 	NEWBOSSBULLET = 4
 	NEWBOSSBULLETWAVE = 12
 	NEWBOSSBULLETWAVESTOP = 20
-	BOSSBULLETSIZE = 8
+	BOSSBULLETSIZE = 16
 	BOSSBULLETSPEEDY = 12
 	BOSSBULLETSPEEDX = 4
 	boss_bullets = []
 	
 	# boss fighter variables
 	bossfighterCounter = 0
+	boss_health = 1000
 	boss_x = 0
 	boss_y = 0
 	NEWBOSS = 200
@@ -227,6 +225,10 @@ def main():
 			score += asteroids.remove(WINDOWHEIGHT)
 
 			fighters.remove(WINDOWHEIGHT)
+			
+			for a in boss_bullets:
+				if a['rect'].top > WINDOWHEIGHT:
+					boss_bullets.remove(a)
 					
 			for b in bullets[:]:
 				if b['rect'].bottom < 0:
@@ -283,11 +285,19 @@ def main():
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 16, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (-BOSSBULLETSPEEDX, BOSSBULLETSPEEDY),
+										'speed':  (-BOSSBULLETSPEEDX, 0.95*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							boss_bullets.append({'rect': pygame.Rect(boss_x + 80, boss_y, BULLETSIZE, BULLETSIZE),
-										'speed':  (BOSSBULLETSPEEDX, BOSSBULLETSPEEDY),
+										'speed':  (BOSSBULLETSPEEDX, 0.95*BOSSBULLETSPEEDY),
+										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
+										})
+							boss_bullets.append({'rect': pygame.Rect(boss_x + 16, boss_y, BULLETSIZE, BULLETSIZE),
+										'speed':  (-2*BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
+										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
+										})
+							boss_bullets.append({'rect': pygame.Rect(boss_x + 80, boss_y, BULLETSIZE, BULLETSIZE),
+										'speed':  (2*BOSSBULLETSPEEDX, 0.9*BOSSBULLETSPEEDY),
 										'surface':pygame.transform.scale(BOSSBULLET_image, (BOSSBULLETSIZE, BOSSBULLETSIZE))
 										})
 							bossbulletCounter = 0
@@ -305,10 +315,7 @@ def main():
 			for b in healthpickups:
 				b['rect'].move_ip(0, b['speed'])
 
-
-
 			score += fighters.collide_bullets(bullets, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES, healthpickups, HEALTHSIZE, HEALTHSPEED, HEALTH_image)
-
 
 			# TODO make this the other way round,
 			# bullets should be removed if they are touching asteroids
@@ -317,6 +324,16 @@ def main():
 			playerHealth = asteroids.collide_player(player, playerHealth)
 
 			playerHealth = fighters.collide_player(player, playerHealth)
+			
+			for i in bullets:
+				for f in bossfighters:
+					if (i['rect']).colliderect(f['rect']):
+						bullets.remove(i)
+						boss_health -= 5
+			
+			if boss_health <= 0:
+				for b in bossfighters:
+					bossfighters.remove(b)
 			
 			for b in boss_bullets:
 				if player.colliderect(b['rect']):
@@ -368,6 +385,7 @@ def main():
 			# draw the stats
 			fontRenderer.draw_stat("Score: ", score, (10,10), screen)
 			fontRenderer.draw_stat("Health: ", playerHealth, (10, 40), screen)
+			fontRenderer.draw_stat("Boss Health: ", boss_health, (10, 70), screen)
 
 			# draw the window onto the screen
 			pygame.display.update()
@@ -389,6 +407,9 @@ def main():
 						for b in bullets:
 							bullets.remove(b)
 						bullets = []
+						for b in boss_bullets:
+							boss_bullets.remove(b)
+						boss_bullets = []
 						for b in bossfighters:
 							bossfighters.remove(b)
 						bossfighters = []
@@ -397,6 +418,7 @@ def main():
 						healthpickups = []
 						bossfighterCounter = 0
 						playerHealth = 100
+						boss_health = 1000
 						score = 0
 						player = pygame.Rect(300, 700, 32, 32)
 						player_x = 316
