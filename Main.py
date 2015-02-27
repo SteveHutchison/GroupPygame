@@ -255,7 +255,6 @@ def main():
 							})
 				boss_x = 316
 				boss_y = (0 - BOSSSIZE)
-				
 			#player shooting mechanic / fires extra bullets with each level of power
 			if player.shooting == True:
 				bulletCounter += 1
@@ -298,13 +297,13 @@ def main():
 			
 			# Change player sprite based on power level (currently broken)
 			if player.power >= 1:
-				player_image = player1
+				player.image = player1
 			if player.power >= 2:
-				player_image = player2
+				player.image = player2
 			if player.power >= 3:
-				player_image = player3
+				player.image = player3
 			if player.power >= 4:
-				player_image = player4
+				player.image = player4
 			
 			# Delete things that are outside the screen
 			player.score += asteroids.remove(WINDOWHEIGHT, explosions, EXPLOSIONSIZE, EXPLOSIONSCALE, EXPLOSIONFRAMES)
