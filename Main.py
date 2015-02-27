@@ -87,7 +87,7 @@ def main():
 	BULLETSPEEDX = 5
 	bullets = []
 	
-	# enemy bullet variables
+	# boss bullet variables
 	bossbulletCounter = 0
 	bossbulletCounterTotal = 0
 	bossbulletwaveCounter = 0
@@ -429,6 +429,8 @@ def main():
 					BOSSSIZE += 8
 					BOSSBULLETSIZE += 4
 					BOSSBULLETSPEEDY += 2
+					# increase the players max health
+					player.maxHealth += 10
 					BOSSBULLETSPEEDX += 1
 			
 			for b in boss_bullets:
@@ -453,7 +455,6 @@ def main():
 			#check player health
 			if player.health <= 0:
 				gameOver = True
-
 
 			# DRAW PHASE
 
