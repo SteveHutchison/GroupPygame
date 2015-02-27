@@ -87,7 +87,7 @@ def main():
 	BULLETSPEEDX = 5
 	bullets = []
 	
-	# enemy bullet variables
+	# boss bullet variables
 	bossbulletCounter = 0
 	bossbulletCounterTotal = 0
 	bossbulletwaveCounter = 0
@@ -145,6 +145,7 @@ def main():
 	splashBossY = -64
 	playerRotated = pygame.transform.rotate(player_image, -90)
 	bossRotated = pygame.transform.rotate(BOSS_image, 0)
+	
 	# Splash Screen
 	while splashScreen == True:
 		for event in pygame.event.get():
@@ -429,6 +430,8 @@ def main():
 					BOSSSIZE += 8
 					BOSSBULLETSIZE += 4
 					BOSSBULLETSPEEDY += 2
+					# increase the players max health
+					player.maxHealth += 10
 					BOSSBULLETSPEEDX += 1
 			
 			for b in boss_bullets:
@@ -453,7 +456,6 @@ def main():
 			#check player health
 			if player.health <= 0:
 				gameOver = True
-
 
 			# DRAW PHASE
 
