@@ -145,7 +145,6 @@ def main():
 	splashBossY = -64
 	playerRotated = pygame.transform.rotate(player_image, -90)
 	bossRotated = pygame.transform.rotate(BOSS_image, 0)
-	
 	# Splash Screen
 	while splashScreen == True:
 		for event in pygame.event.get():
