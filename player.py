@@ -18,6 +18,7 @@ class Player:
 	def reset(self, x, y):
 		self.rect = pygame.Rect(x, y, 32, 32)
 		self.health = 100
+		self.maxHealth = 100
 		self.score = 0
 		self.x = 316
 		self.y = 700
